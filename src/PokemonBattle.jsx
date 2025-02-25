@@ -3,6 +3,8 @@ import io from 'socket.io-client';
 
 const PokemonBattle = () => {
   const socketRef = useRef(null);
+  const battleLogRef = useRef(null);
+  const chatWindowRef = useRef(null);
 
   const originalPokemonList = [
     { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png' },
@@ -87,7 +89,7 @@ const PokemonBattle = () => {
     { id: 80, name: 'Slowbro', type: 'Water', secondaryType: 'Psychic', hp: 95, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/80.png' },
     { id: 81, name: 'Magnemite', type: 'Electric', secondaryType: null, hp: 25, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/81.png' },
     { id: 82, name: 'Magneton', type: 'Electric', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/82.png' },
-    { id: 83, name: 'Farfetch\'d', type: 'Normal', secondaryType: 'Flying', hp: 52, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/83.png' },
+    { id: 83, name: "Farfetch'd", type: 'Normal', secondaryType: 'Flying', hp: 52, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/83.png' },
     { id: 84, name: 'Doduo', type: 'Normal', secondaryType: 'Flying', hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/84.png' },
     { id: 85, name: 'Dodrio', type: 'Normal', secondaryType: 'Flying', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/85.png' },
     { id: 86, name: 'Seel', type: 'Water', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/86.png' },
@@ -173,6 +175,7 @@ const PokemonBattle = () => {
   const [multiplayerStatus, setMultiplayerStatus] = useState('disconnected');
   const [teamSize, setTeamSize] = useState(6);
   const [showAllPokemon, setShowAllPokemon] = useState(false);
+  const [chatMessage, setChatMessage] = useState('');
 
   useEffect(() => {
     if (gameMode === 'singleplayer') {
@@ -181,9 +184,22 @@ const PokemonBattle = () => {
     return () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
+        socketRef.current = null;
       }
     };
   }, [gameMode]);
+
+  useEffect(() => {
+    if (battleLogRef.current) {
+      battleLogRef.current.scrollTop = battleLogRef.current.scrollHeight;
+    }
+  }, [battleLog]);
+
+  useEffect(() => {
+    if (chatWindowRef.current) {
+      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+    }
+  }, [battleLog]);
 
   const typeChart = {
     'Bug': { 'Fighting': 0.5, 'Flying': 0.5, 'Poison': 0.5, 'Ghost': 0.5, 'Fire': 0.5, 'Grass': 2, 'Psychic': 2, 'Normal': 1, 'Ground': 1, 'Rock': 1, 'Ice': 1, 'Dragon': 1, 'Water': 1, 'Electric': 1 },
@@ -241,7 +257,6 @@ const PokemonBattle = () => {
       'Rock': [{ name: 'Rock Throw', power: 15, type: 'Rock' }, { name: 'Rock Slide', power: 20, type: 'Rock' }, { name: 'Stone Edge', power: 25, type: 'Rock' }],
       'Water': [{ name: 'Water Gun', power: 15, type: 'Water' }, { name: 'Bubble Beam', power: 20, type: 'Water' }, { name: 'Hydro Pump', power: 25, type: 'Water' }]
     };
-    
     const primaryMoves = movesByType[primaryType] || movesByType['Normal'];
     let secondaryMove = null;
     if (secondaryType && movesByType[secondaryType]) {
@@ -249,21 +264,15 @@ const PokemonBattle = () => {
       secondaryMove = secondaryMoves[Math.floor(Math.random() * secondaryMoves.length)];
     }
     let moveList = [...primaryMoves];
-    if (secondaryMove) {
-      moveList[Math.floor(Math.random() * moveList.length)] = secondaryMove;
-    }
-    if (moveList.length < 4) {
-      moveList.push({ name: 'Tackle', power: 10, type: 'Normal' });
-    }
+    if (secondaryMove) moveList[Math.floor(Math.random() * moveList.length)] = secondaryMove;
+    if (moveList.length < 4) moveList.push({ name: 'Tackle', power: 10, type: 'Normal' });
     return moveList;
   };
 
   const getTypeEffectiveness = (moveType, defenderType, defenderSecondaryType) => {
-    let effectiveness = typeChart[moveType] && typeChart[moveType][defenderType] ? typeChart[moveType][defenderType] : 1;
+    let effectiveness = typeChart[moveType]?.[defenderType] ?? 1;
     if (defenderSecondaryType) {
-      const secondaryEffectiveness = typeChart[moveType] && typeChart[moveType][defenderSecondaryType] 
-        ? typeChart[moveType][defenderSecondaryType] 
-        : 1;
+      const secondaryEffectiveness = typeChart[moveType]?.[defenderSecondaryType] ?? 1;
       effectiveness *= secondaryEffectiveness;
     }
     return effectiveness;
@@ -278,9 +287,9 @@ const PokemonBattle = () => {
     setGameState('playerTurn');
   };
 
-  const initializeSocket = async () => {
+  const initializeSocket = () => {
     if (!socketRef.current) {
-      socketRef.current = io({ path: '/api/socket' });
+      socketRef.current = io('http://localhost:3001', { path: '/api/socket' });
       socketRef.current.on('connect', () => {
         console.log('Connected to socket server');
         setMultiplayerStatus('waiting');
@@ -305,7 +314,6 @@ const PokemonBattle = () => {
         handleOpponentAction(action);
       });
       socketRef.current.on('opponent_disconnected', () => {
-        console.log('Opponent disconnected detected');
         setBattleLog([...battleLog, 'Your opponent has disconnected.']);
         setMultiplayerStatus('disconnected');
         setGameState('opponentWin');
@@ -317,45 +325,47 @@ const PokemonBattle = () => {
     }
   };
 
-  const createMultiplayerRoom = async () => {
+  const createMultiplayerRoom = () => {
     if (!playerName.trim()) {
       setBattleLog([...battleLog, 'Please enter your name first!']);
       return;
     }
-    await initializeSocket();
+    initializeSocket();
     socketRef.current.emit('create_room', { name: playerName });
   };
 
-  const joinMultiplayerRoom = async () => {
+  const joinMultiplayerRoom = () => {
     if (!playerName.trim() || !roomCode) {
       setBattleLog([...battleLog, 'Please enter your name and a room code!']);
       return;
     }
-    await initializeSocket();
+    initializeSocket();
     socketRef.current.emit('join_room', {
       roomId: roomCode,
       playerData: { name: playerName }
     });
   };
 
+  const sendChatMessage = () => {
+    if (!chatMessage.trim() || !socketRef.current || multiplayerStatus !== 'connected') return;
+    socketRef.current.emit('battle_action', {
+      roomId: roomCode,
+      action: { type: 'chat', sender: playerName, message: chatMessage }
+    });
+    setBattleLog([...battleLog, `${playerName}: ${chatMessage}`]);
+    setChatMessage('');
+  };
+
   const handleOpponentAction = (action) => {
     if (action.type === 'attack') {
       const move = action.move;
-      const effectiveness = getTypeEffectiveness(
-        move.type, 
-        playerActivePokemon.type, 
-        playerActivePokemon.secondaryType
-      );
+      const effectiveness = getTypeEffectiveness(move.type, playerActivePokemon.type, playerActivePokemon.secondaryType);
       const baseDamage = move.power;
       const damage = Math.floor(baseDamage * effectiveness * action.randomFactor);
       const newHp = Math.max(0, playerActivePokemon.currentHp - damage);
       const updatedPlayer = { ...playerActivePokemon, currentHp: newHp };
       setPlayerActivePokemon(updatedPlayer);
-      setPlayerTeam(prev => 
-        prev.map(pokemon => 
-          pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon
-        )
-      );
+      setPlayerTeam(prev => prev.map(pokemon => pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon));
       addToLog(`Opponent's ${action.pokemonName} used ${move.name}!`);
       addToLog(`Dealt ${damage} damage!`);
       if (newHp === 0) {
@@ -374,19 +384,10 @@ const PokemonBattle = () => {
     } else if (action.type === 'switch') {
       addToLog(`Opponent switched to ${action.pokemonName}!`);
       const switchedPokemon = opponentTeam.find(p => p.id === action.pokemonId);
-      if (switchedPokemon) {
-        setOpponentActivePokemon(switchedPokemon);
-      }
+      if (switchedPokemon) setOpponentActivePokemon(switchedPokemon);
       setGameState('playerTurn');
     } else if (action.type === 'chat') {
-      const chatWindow = document.getElementById('chat-window');
-      if (chatWindow) {
-        const msgElement = document.createElement('div');
-        msgElement.className = 'text-sm text-gray-800';
-        msgElement.textContent = `${action.sender}: ${action.message}`;
-        chatWindow.appendChild(msgElement);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-      }
+      addToLog(`${action.sender}: ${action.message}`);
     }
   };
 
@@ -406,18 +407,13 @@ const PokemonBattle = () => {
     setGameState('selecting');
     setShowAllPokemon(false);
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
-      socketRef.current.emit('team_selected', {
-        roomId: roomCode,
-        team: playerPokemonTeam
-      });
+      socketRef.current.emit('team_selected', { roomId: roomCode, team: playerPokemonTeam });
     }
   };
 
   const getFilteredPokemon = () => {
     return originalPokemonList.filter(pokemon => {
-      const matchesType = filterType === 'All' || 
-                          pokemon.type === filterType || 
-                          pokemon.secondaryType === filterType;
+      const matchesType = filterType === 'All' || pokemon.type === filterType || pokemon.secondaryType === filterType;
       const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesType && matchesSearch;
     });
@@ -431,44 +427,23 @@ const PokemonBattle = () => {
     if (gameState !== 'playerTurn') return;
     setSelectedMove(moveIndex);
     const move = playerActivePokemon.moves[moveIndex];
-    const effectiveness = getTypeEffectiveness(
-      move.type, 
-      opponentActivePokemon.type, 
-      opponentActivePokemon.secondaryType
-    );
+    const effectiveness = getTypeEffectiveness(move.type, opponentActivePokemon.type, opponentActivePokemon.secondaryType);
     const baseDamage = move.power;
     const randomFactor = 0.85 + Math.random() * 0.3;
     const damage = Math.floor(baseDamage * effectiveness * randomFactor);
-    let effectivenessMessage = '';
-    if (effectiveness > 1) {
-      effectivenessMessage = "It's super effective!";
-    } else if (effectiveness < 1 && effectiveness > 0) {
-      effectivenessMessage = "It's not very effective...";
-    } else if (effectiveness === 0) {
-      effectivenessMessage = "It has no effect!";
-    }
+    let effectivenessMessage = effectiveness > 1 ? "It's super effective!" :
+                              effectiveness < 1 && effectiveness > 0 ? "It's not very effective..." :
+                              effectiveness === 0 ? "It has no effect!" : "";
     const newHp = Math.max(0, opponentActivePokemon.currentHp - damage);
     const updatedOpponent = { ...opponentActivePokemon, currentHp: newHp };
     setOpponentActivePokemon(updatedOpponent);
-    setOpponentTeam(prev => 
-      prev.map(pokemon => 
-        pokemon.id === opponentActivePokemon.id ? updatedOpponent : pokemon
-      )
-    );
+    setOpponentTeam(prev => prev.map(pokemon => pokemon.id === opponentActivePokemon.id ? updatedOpponent : pokemon));
     addToLog(`${playerActivePokemon.name} used ${move.name}!`);
-    if (damage > 0) {
-      addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
-    }
+    if (damage > 0) addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
-      if (gameState !== 'playerTurn') return;
       socketRef.current.emit('battle_action', {
         roomId: roomCode,
-        action: {
-          type: 'attack',
-          pokemonName: playerActivePokemon.name,
-          move: move,
-          randomFactor: randomFactor
-        }
+        action: { type: 'attack', pokemonName: playerActivePokemon.name, move, randomFactor }
       });
     }
     if (newHp === 0) {
@@ -487,46 +462,27 @@ const PokemonBattle = () => {
     } else {
       setGameState('opponentTurn');
       if (gameMode === 'singleplayer') {
-        setTimeout(() => {
-          console.log('Triggering opponent attack');
-          handleOpponentAttack();
-        }, 1500);
+        setTimeout(() => handleOpponentAttack(), 1500);
       }
     }
   };
 
   const handleOpponentAttack = () => {
-    console.log('Opponent attack executing');
     const moveIndex = Math.floor(Math.random() * opponentActivePokemon.moves.length);
     const move = opponentActivePokemon.moves[moveIndex];
-    const effectiveness = getTypeEffectiveness(
-      move.type, 
-      playerActivePokemon.type, 
-      playerActivePokemon.secondaryType
-    );
+    const effectiveness = getTypeEffectiveness(move.type, playerActivePokemon.type, playerActivePokemon.secondaryType);
     const baseDamage = move.power;
     const randomFactor = 0.85 + Math.random() * 0.3;
     const damage = Math.floor(baseDamage * effectiveness * randomFactor);
-    let effectivenessMessage = '';
-    if (effectiveness > 1) {
-      effectivenessMessage = "It's super effective!";
-    } else if (effectiveness < 1 && effectiveness > 0) {
-      effectivenessMessage = "It's not very effective...";
-    } else if (effectiveness === 0) {
-      effectivenessMessage = "It has no effect!";
-    }
+    let effectivenessMessage = effectiveness > 1 ? "It's super effective!" :
+                              effectiveness < 1 && effectiveness > 0 ? "It's not very effective..." :
+                              effectiveness === 0 ? "It has no effect!" : "";
     const newHp = Math.max(0, playerActivePokemon.currentHp - damage);
     const updatedPlayer = { ...playerActivePokemon, currentHp: newHp };
     setPlayerActivePokemon(updatedPlayer);
-    setPlayerTeam(prev => 
-      prev.map(pokemon => 
-        pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon
-      )
-    );
+    setPlayerTeam(prev => prev.map(pokemon => pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon));
     addToLog(`${opponentActivePokemon.name} used ${move.name}!`);
-    if (damage > 0) {
-      addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
-    }
+    if (damage > 0) addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
     if (newHp === 0) {
       addToLog(`${playerActivePokemon.name} fainted!`);
       const nextPlayer = playerTeam.find(p => p.id !== playerActivePokemon.id && p.currentHp > 0);
@@ -545,84 +501,67 @@ const PokemonBattle = () => {
 
   const switchPokemon = (pokemon) => {
     if (gameState !== 'switching' && gameState !== 'playerTurn') return;
-    if (pokemon.id === playerActivePokemon.id) return;
-    if (pokemon.currentHp <= 0) return;
+    if (pokemon.id === playerActivePokemon.id || pokemon.currentHp <= 0) return;
     setPlayerActivePokemon(pokemon);
     addToLog(`You switched to ${pokemon.name}!`);
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
       socketRef.current.emit('battle_action', {
         roomId: roomCode,
-        action: {
-          type: 'switch',
-          pokemonId: pokemon.id,
-          pokemonName: pokemon.name
-        }
+        action: { type: 'switch', pokemonId: pokemon.id, pokemonName: pokemon.name }
       });
     }
     if (gameState === 'playerTurn') {
       setGameState('opponentTurn');
       if (gameMode === 'singleplayer') {
-        setTimeout(() => {
-          handleOpponentAttack();
-        }, 1500);
+        setTimeout(() => handleOpponentAttack(), 1500);
       }
     } else {
       setGameState('playerTurn');
     }
   };
 
-  useEffect(() => {
-    const logElement = document.getElementById('battle-log');
-    if (logElement) {
-      logElement.scrollTop = logElement.scrollHeight;
-    }
-  }, [battleLog]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-200 via-green-100 to-yellow-100 flex items-center justify-center p-6">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl p-8 border-8 border-poke-red relative overflow-hidden">
-        {/* Poké Ball Decorative Background */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <div className="w-64 h-64 bg-poke-red rounded-full absolute -top-32 -left-32 border-8 border-white"></div>
           <div className="w-64 h-64 bg-poke-red rounded-full absolute -bottom-32 -right-32 border-8 border-white"></div>
         </div>
-        
-        {/* Game Header */}
+
         <div className="mb-8 text-center relative z-10">
           <h1 className="text-5xl font-extrabold text-poke-red mb-3 drop-shadow-lg">Pokémon Battle Simulator</h1>
           <p className="text-xl text-gray-700 font-semibold tracking-wide">Unleash the Power of the Original 151!</p>
           <div className="mt-6 flex justify-center gap-6">
-            <button 
-              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${
-                gameMode === 'singleplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-              }`}
+            <button
+              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${gameMode === 'singleplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
               onClick={() => {
                 setGameMode('singleplayer');
                 setMultiplayerStatus('disconnected');
+                setRoomCode('');
+                setPlayerName('');
+                setOpponentTeam([]);
+                setOpponentActivePokemon(null);
                 if (socketRef.current) socketRef.current.disconnect();
               }}
             >
               Single Player
             </button>
-            <button 
-              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${
-                gameMode === 'multiplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-              }`}
+            <button
+              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${gameMode === 'multiplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
               onClick={() => setGameMode('multiplayer')}
             >
               Multiplayer
             </button>
           </div>
         </div>
-        
-        {/* Multiplayer Setup */}
+
         {gameMode === 'multiplayer' && gameState === 'selecting' && multiplayerStatus === 'disconnected' && (
           <div className="mb-10 p-8 bg-gray-50 rounded-xl shadow-inner border-4 border-poke-blue relative z-10">
             <h2 className="text-3xl font-bold text-poke-blue mb-6 drop-shadow-md">Multiplayer Arena</h2>
             <div className="mb-6">
               <label className="block mb-2 text-xl text-gray-800 font-semibold">Trainer Name:</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="w-full p-4 border-2 border-poke-yellow rounded-lg focus:outline-none focus:ring-4 focus:ring-poke-blue bg-white text-gray-800 text-lg shadow-md"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
@@ -630,20 +569,20 @@ const PokemonBattle = () => {
               />
             </div>
             <div className="flex space-x-6">
-              <button 
+              <button
                 className="bg-poke-green hover:bg-green-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow"
                 onClick={createMultiplayerRoom}
               >
                 Create Room
               </button>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 className="flex-1 p-4 border-2 border-poke-yellow rounded-lg focus:outline-none focus:ring-4 focus:ring-poke-blue bg-white text-gray-800 text-lg shadow-md"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
                 placeholder="Enter room code"
               />
-              <button 
+              <button
                 className="bg-poke-purple hover:bg-purple-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow disabled:opacity-50"
                 disabled={!roomCode}
                 onClick={joinMultiplayerRoom}
@@ -653,8 +592,7 @@ const PokemonBattle = () => {
             </div>
           </div>
         )}
-        
-        {/* Pokémon Selection */}
+
         {showAllPokemon && (
           <div className="mb-10 p-8 bg-white rounded-xl shadow-lg border-4 border-poke-yellow relative z-10">
             <h2 className="text-3xl font-bold text-poke-yellow mb-6 drop-shadow-md">Assemble Your Team</h2>
@@ -662,7 +600,7 @@ const PokemonBattle = () => {
             <div className="flex mb-8 gap-6">
               <div className="flex-1">
                 <label className="block mb-2 text-xl text-gray-800 font-semibold">Filter by Type:</label>
-                <select 
+                <select
                   className="w-full p-4 border-2 border-poke-yellow rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-4 focus:ring-poke-blue text-lg shadow-md"
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
@@ -698,13 +636,9 @@ const PokemonBattle = () => {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mb-8 max-h-96 overflow-y-auto">
               {getFilteredPokemon().map((pokemon) => (
-                <div 
-                  key={pokemon.id} 
-                  className={`flex flex-col items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border-4 ${
-                    playerTeam.some(p => p.id === pokemon.id) 
-                      ? 'bg-blue-100 border-poke-blue shadow-xl' 
-                      : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:shadow-xl'
-                  }`}
+                <div
+                  key={pokemon.id}
+                  className={`flex flex-col items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border-4 ${playerTeam.some(p => p.id === pokemon.id) ? 'bg-blue-100 border-poke-blue shadow-xl' : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:shadow-xl'}`}
                   onClick={() => {
                     if (playerTeam.some(p => p.id === pokemon.id)) {
                       setPlayerTeam(playerTeam.filter(p => p.id !== pokemon.id));
@@ -715,9 +649,7 @@ const PokemonBattle = () => {
                 >
                   <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mb-2 pixelated" />
                   <div className="font-bold text-xl text-poke-blue">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
+                  <div className="text-sm text-gray-600">{pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}</div>
                   <div className="text-sm text-gray-600">HP: {pokemon.hp}</div>
                 </div>
               ))}
@@ -728,10 +660,8 @@ const PokemonBattle = () => {
                 <div key={pokemon.id} className="flex flex-col items-center bg-blue-100 p-4 rounded-xl shadow-lg border-4 border-poke-blue">
                   <img src={pokemon.sprite} alt={pokemon.name} className="w-16 h-16 mb-2 pixelated" />
                   <div className="font-bold text-lg text-poke-blue">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
-                  <button 
+                  <div className="text-sm text-gray-600">{pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}</div>
+                  <button
                     className="mt-2 text-sm bg-poke-red hover:bg-red-700 text-white px-4 py-1 rounded-full transition-all duration-300 shadow-md"
                     onClick={() => setPlayerTeam(playerTeam.filter(p => p.id !== pokemon.id))}
                   >
@@ -741,14 +671,14 @@ const PokemonBattle = () => {
               ))}
             </div>
             <div className="flex space-x-6 justify-center">
-              <button 
+              <button
                 className="bg-poke-green hover:bg-green-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow disabled:opacity-50"
                 onClick={() => createCustomTeam(playerTeam)}
                 disabled={playerTeam.length !== teamSize}
               >
                 Confirm Team
               </button>
-              <button 
+              <button
                 className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow"
                 onClick={() => setShowAllPokemon(false)}
               >
@@ -757,8 +687,7 @@ const PokemonBattle = () => {
             </div>
           </div>
         )}
-        
-        {/* Team Selection / Battle Start */}
+
         {gameState === 'selecting' && !showAllPokemon && (
           <div className="mb-10 relative z-10">
             <h2 className="text-3xl font-bold text-poke-blue mb-6 drop-shadow-md">Your Team</h2>
@@ -767,9 +696,7 @@ const PokemonBattle = () => {
                 <div key={pokemon.id} className="flex flex-col items-center bg-white p-4 rounded-xl shadow-lg border-4 border-poke-blue transition-all duration-300 hover:shadow-xl">
                   <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mb-2 pixelated" />
                   <div className="font-bold text-xl text-poke-blue">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
+                  <div className="text-sm text-gray-600">{pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}</div>
                   <div className="text-sm text-gray-600">HP: {pokemon.hp}</div>
                 </div>
               ))}
@@ -780,13 +707,34 @@ const PokemonBattle = () => {
                 <div key={pokemon.id} className="flex flex-col items-center bg-white p-4 rounded-xl shadow-lg border-4 border-poke-red transition-all duration-300 hover:shadow-xl">
                   <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mb-2 pixelated" />
                   <div className="font-bold text-xl text-poke-red">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
+                  <div className="text-sm text-gray-600">{pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}</div>
                   <div className="text-sm text-gray-600">HP: {pokemon.hp}</div>
                 </div>
               ))}
             </div>
             <div className="flex flex-wrap gap-6 mt-6 justify-center">
-              <button 
-                className="bg-poke-yellow hover:bg-yellow-500 text-black font-bold px-10 py-4 rounded-full border-4 border-poke-red shadow-lg transform transition-all duration-300 hover:scale-105
+              <button
+                className="bg-poke-yellow hover:bg-yellow-500 text-black font-bold px-10 py-4 rounded-full border-4 border-poke-red shadow-lg transform transition-all duration-300 hover:scale-105"
+                onClick={startBattle}
+                disabled={!playerTeam.length || !opponentTeam.length}
+              >
+                Start Battle
+              </button>
+              <button
+                className="bg-poke-green hover:bg-green-700 text-white font-bold px-10 py-4 rounded-full border-4 border-poke-yellow shadow-lg transform transition-all duration-300 hover:scale-105"
+                onClick={() => setShowAllPokemon(true)}
+              >
+                Change Team
+              </button>
+            </div>
+          </div>
+        )}
+
+        {(gameState === 'playerTurn' || gameState === 'opponentTurn' || gameState === 'switching' || gameState === 'playerWin' || gameState === 'opponentWin') && (
+          <div className="relative z-10">
+            <div className="flex justify-between mb-8">
+              <div className="w-1/2 p-4">
+                <h2 className="text-2xl font-bold text-poke-blue mb-4">Your Pokémon</h2>
+                {playerActivePokemon && (
+                  <div className="bg-white p-4 rounded-xl shadow-lg border-4 border-poke-blue">
+                    <img src={playerActivePokemon.sprite} alt={
