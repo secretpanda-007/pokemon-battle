@@ -5,159 +5,159 @@ const PokemonBattle = () => {
   // Socket reference for WebSocket connection
   const socketRef = useRef(null);
 
-  // Complete list of original 151 Pokemon with types and base HP
+  // Complete list of original 151 Pokémon with types and base HP (images removed)
   const originalPokemonList = [
-    { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45, image: '/api/placeholder/80/80' },
-    { id: 2, name: 'Ivysaur', type: 'Grass', secondaryType: 'Poison', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 3, name: 'Venusaur', type: 'Grass', secondaryType: 'Poison', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 4, name: 'Charmander', type: 'Fire', secondaryType: null, hp: 39, image: '/api/placeholder/80/80' },
-    { id: 5, name: 'Charmeleon', type: 'Fire', secondaryType: null, hp: 58, image: '/api/placeholder/80/80' },
-    { id: 6, name: 'Charizard', type: 'Fire', secondaryType: 'Flying', hp: 78, image: '/api/placeholder/80/80' },
-    { id: 7, name: 'Squirtle', type: 'Water', secondaryType: null, hp: 44, image: '/api/placeholder/80/80' },
-    { id: 8, name: 'Wartortle', type: 'Water', secondaryType: null, hp: 59, image: '/api/placeholder/80/80' },
-    { id: 9, name: 'Blastoise', type: 'Water', secondaryType: null, hp: 79, image: '/api/placeholder/80/80' },
-    { id: 10, name: 'Caterpie', type: 'Bug', secondaryType: null, hp: 45, image: '/api/placeholder/80/80' },
-    { id: 11, name: 'Metapod', type: 'Bug', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 12, name: 'Butterfree', type: 'Bug', secondaryType: 'Flying', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 13, name: 'Weedle', type: 'Bug', secondaryType: 'Poison', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 14, name: 'Kakuna', type: 'Bug', secondaryType: 'Poison', hp: 45, image: '/api/placeholder/80/80' },
-    { id: 15, name: 'Beedrill', type: 'Bug', secondaryType: 'Poison', hp: 65, image: '/api/placeholder/80/80' },
-    { id: 16, name: 'Pidgey', type: 'Normal', secondaryType: 'Flying', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 17, name: 'Pidgeotto', type: 'Normal', secondaryType: 'Flying', hp: 63, image: '/api/placeholder/80/80' },
-    { id: 18, name: 'Pidgeot', type: 'Normal', secondaryType: 'Flying', hp: 83, image: '/api/placeholder/80/80' },
-    { id: 19, name: 'Rattata', type: 'Normal', secondaryType: null, hp: 30, image: '/api/placeholder/80/80' },
-    { id: 20, name: 'Raticate', type: 'Normal', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 21, name: 'Spearow', type: 'Normal', secondaryType: 'Flying', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 22, name: 'Fearow', type: 'Normal', secondaryType: 'Flying', hp: 65, image: '/api/placeholder/80/80' },
-    { id: 23, name: 'Ekans', type: 'Poison', secondaryType: null, hp: 35, image: '/api/placeholder/80/80' },
-    { id: 24, name: 'Arbok', type: 'Poison', secondaryType: null, hp: 60, image: '/api/placeholder/80/80' },
-    { id: 25, name: 'Pikachu', type: 'Electric', secondaryType: null, hp: 35, image: '/api/placeholder/80/80' },
-    { id: 26, name: 'Raichu', type: 'Electric', secondaryType: null, hp: 60, image: '/api/placeholder/80/80' },
-    { id: 27, name: 'Sandshrew', type: 'Ground', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 28, name: 'Sandslash', type: 'Ground', secondaryType: null, hp: 75, image: '/api/placeholder/80/80' },
-    { id: 29, name: 'Nidoran♀', type: 'Poison', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 30, name: 'Nidorina', type: 'Poison', secondaryType: null, hp: 70, image: '/api/placeholder/80/80' },
-    { id: 31, name: 'Nidoqueen', type: 'Poison', secondaryType: 'Ground', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 32, name: 'Nidoran♂', type: 'Poison', secondaryType: null, hp: 46, image: '/api/placeholder/80/80' },
-    { id: 33, name: 'Nidorino', type: 'Poison', secondaryType: null, hp: 61, image: '/api/placeholder/80/80' },
-    { id: 34, name: 'Nidoking', type: 'Poison', secondaryType: 'Ground', hp: 81, image: '/api/placeholder/80/80' },
-    { id: 35, name: 'Clefairy', type: 'Normal', secondaryType: null, hp: 70, image: '/api/placeholder/80/80' },
-    { id: 36, name: 'Clefable', type: 'Normal', secondaryType: null, hp: 95, image: '/api/placeholder/80/80' },
-    { id: 37, name: 'Vulpix', type: 'Fire', secondaryType: null, hp: 38, image: '/api/placeholder/80/80' },
-    { id: 38, name: 'Ninetales', type: 'Fire', secondaryType: null, hp: 73, image: '/api/placeholder/80/80' },
-    { id: 39, name: 'Jigglypuff', type: 'Normal', secondaryType: null, hp: 115, image: '/api/placeholder/80/80' },
-    { id: 40, name: 'Wigglytuff', type: 'Normal', secondaryType: null, hp: 140, image: '/api/placeholder/80/80' },
-    { id: 41, name: 'Zubat', type: 'Poison', secondaryType: 'Flying', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 42, name: 'Golbat', type: 'Poison', secondaryType: 'Flying', hp: 75, image: '/api/placeholder/80/80' },
-    { id: 43, name: 'Oddish', type: 'Grass', secondaryType: 'Poison', hp: 45, image: '/api/placeholder/80/80' },
-    { id: 44, name: 'Gloom', type: 'Grass', secondaryType: 'Poison', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 45, name: 'Vileplume', type: 'Grass', secondaryType: 'Poison', hp: 75, image: '/api/placeholder/80/80' },
-    { id: 46, name: 'Paras', type: 'Bug', secondaryType: 'Grass', hp: 35, image: '/api/placeholder/80/80' },
-    { id: 47, name: 'Parasect', type: 'Bug', secondaryType: 'Grass', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 48, name: 'Venonat', type: 'Bug', secondaryType: 'Poison', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 49, name: 'Venomoth', type: 'Bug', secondaryType: 'Poison', hp: 70, image: '/api/placeholder/80/80' },
-    { id: 50, name: 'Diglett', type: 'Ground', secondaryType: null, hp: 10, image: '/api/placeholder/80/80' },
-    { id: 51, name: 'Dugtrio', type: 'Ground', secondaryType: null, hp: 35, image: '/api/placeholder/80/80' },
-    { id: 52, name: 'Meowth', type: 'Normal', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 53, name: 'Persian', type: 'Normal', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 54, name: 'Psyduck', type: 'Water', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 55, name: 'Golduck', type: 'Water', secondaryType: null, hp: 80, image: '/api/placeholder/80/80' },
-    { id: 56, name: 'Mankey', type: 'Fighting', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 57, name: 'Primeape', type: 'Fighting', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 58, name: 'Growlithe', type: 'Fire', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 59, name: 'Arcanine', type: 'Fire', secondaryType: null, hp: 90, image: '/api/placeholder/80/80' },
-    { id: 60, name: 'Poliwag', type: 'Water', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 61, name: 'Poliwhirl', type: 'Water', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 62, name: 'Poliwrath', type: 'Water', secondaryType: 'Fighting', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 63, name: 'Abra', type: 'Psychic', secondaryType: null, hp: 25, image: '/api/placeholder/80/80' },
-    { id: 64, name: 'Kadabra', type: 'Psychic', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 65, name: 'Alakazam', type: 'Psychic', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 66, name: 'Machop', type: 'Fighting', secondaryType: null, hp: 70, image: '/api/placeholder/80/80' },
-    { id: 67, name: 'Machoke', type: 'Fighting', secondaryType: null, hp: 80, image: '/api/placeholder/80/80' },
-    { id: 68, name: 'Machamp', type: 'Fighting', secondaryType: null, hp: 90, image: '/api/placeholder/80/80' },
-    { id: 69, name: 'Bellsprout', type: 'Grass', secondaryType: 'Poison', hp: 50, image: '/api/placeholder/80/80' },
-    { id: 70, name: 'Weepinbell', type: 'Grass', secondaryType: 'Poison', hp: 65, image: '/api/placeholder/80/80' },
-    { id: 71, name: 'Victreebel', type: 'Grass', secondaryType: 'Poison', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 72, name: 'Tentacool', type: 'Water', secondaryType: 'Poison', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 73, name: 'Tentacruel', type: 'Water', secondaryType: 'Poison', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 74, name: 'Geodude', type: 'Rock', secondaryType: 'Ground', hp: 40, image: '/api/placeholder/80/80' },
-    { id: 75, name: 'Graveler', type: 'Rock', secondaryType: 'Ground', hp: 55, image: '/api/placeholder/80/80' },
-    { id: 76, name: 'Golem', type: 'Rock', secondaryType: 'Ground', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 77, name: 'Ponyta', type: 'Fire', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 78, name: 'Rapidash', type: 'Fire', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 79, name: 'Slowpoke', type: 'Water', secondaryType: 'Psychic', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 80, name: 'Slowbro', type: 'Water', secondaryType: 'Psychic', hp: 95, image: '/api/placeholder/80/80' },
-    { id: 81, name: 'Magnemite', type: 'Electric', secondaryType: null, hp: 25, image: '/api/placeholder/80/80' },
-    { id: 82, name: 'Magneton', type: 'Electric', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 83, name: 'Farfetch\'d', type: 'Normal', secondaryType: 'Flying', hp: 52, image: '/api/placeholder/80/80' },
-    { id: 84, name: 'Doduo', type: 'Normal', secondaryType: 'Flying', hp: 35, image: '/api/placeholder/80/80' },
-    { id: 85, name: 'Dodrio', type: 'Normal', secondaryType: 'Flying', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 86, name: 'Seel', type: 'Water', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 87, name: 'Dewgong', type: 'Water', secondaryType: 'Ice', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 88, name: 'Grimer', type: 'Poison', secondaryType: null, hp: 80, image: '/api/placeholder/80/80' },
-    { id: 89, name: 'Muk', type: 'Poison', secondaryType: null, hp: 105, image: '/api/placeholder/80/80' },
-    { id: 90, name: 'Shellder', type: 'Water', secondaryType: null, hp: 30, image: '/api/placeholder/80/80' },
-    { id: 91, name: 'Cloyster', type: 'Water', secondaryType: 'Ice', hp: 50, image: '/api/placeholder/80/80' },
-    { id: 92, name: 'Gastly', type: 'Ghost', secondaryType: 'Poison', hp: 30, image: '/api/placeholder/80/80' },
-    { id: 93, name: 'Haunter', type: 'Ghost', secondaryType: 'Poison', hp: 45, image: '/api/placeholder/80/80' },
-    { id: 94, name: 'Gengar', type: 'Ghost', secondaryType: 'Poison', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 95, name: 'Onix', type: 'Rock', secondaryType: 'Ground', hp: 35, image: '/api/placeholder/80/80' },
-    { id: 96, name: 'Drowzee', type: 'Psychic', secondaryType: null, hp: 60, image: '/api/placeholder/80/80' },
-    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: null, hp: 85, image: '/api/placeholder/80/80' },
-    { id: 98, name: 'Krabby', type: 'Water', secondaryType: null, hp: 30, image: '/api/placeholder/80/80' },
-    { id: 99, name: 'Kingler', type: 'Water', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 100, name: 'Voltorb', type: 'Electric', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 101, name: 'Electrode', type: 'Electric', secondaryType: null, hp: 60, image: '/api/placeholder/80/80' },
-    { id: 102, name: 'Exeggcute', type: 'Grass', secondaryType: 'Psychic', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 103, name: 'Exeggutor', type: 'Grass', secondaryType: 'Psychic', hp: 95, image: '/api/placeholder/80/80' },
-    { id: 104, name: 'Cubone', type: 'Ground', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 105, name: 'Marowak', type: 'Ground', secondaryType: null, hp: 60, image: '/api/placeholder/80/80' },
-    { id: 106, name: 'Hitmonlee', type: 'Fighting', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 107, name: 'Hitmonchan', type: 'Fighting', secondaryType: null, hp: 50, image: '/api/placeholder/80/80' },
-    { id: 108, name: 'Lickitung', type: 'Normal', secondaryType: null, hp: 90, image: '/api/placeholder/80/80' },
-    { id: 109, name: 'Koffing', type: 'Poison', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 110, name: 'Weezing', type: 'Poison', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 111, name: 'Rhyhorn', type: 'Ground', secondaryType: 'Rock', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 112, name: 'Rhydon', type: 'Ground', secondaryType: 'Rock', hp: 105, image: '/api/placeholder/80/80' },
-    { id: 113, name: 'Chansey', type: 'Normal', secondaryType: null, hp: 250, image: '/api/placeholder/80/80' },
-    { id: 114, name: 'Tangela', type: 'Grass', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 115, name: 'Kangaskhan', type: 'Normal', secondaryType: null, hp: 105, image: '/api/placeholder/80/80' },
-    { id: 116, name: 'Horsea', type: 'Water', secondaryType: null, hp: 30, image: '/api/placeholder/80/80' },
-    { id: 117, name: 'Seadra', type: 'Water', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 118, name: 'Goldeen', type: 'Water', secondaryType: null, hp: 45, image: '/api/placeholder/80/80' },
-    { id: 119, name: 'Seaking', type: 'Water', secondaryType: null, hp: 80, image: '/api/placeholder/80/80' },
-    { id: 120, name: 'Staryu', type: 'Water', secondaryType: null, hp: 30, image: '/api/placeholder/80/80' },
-    { id: 121, name: 'Starmie', type: 'Water', secondaryType: 'Psychic', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 122, name: 'Mr. Mime', type: 'Psychic', secondaryType: null, hp: 40, image: '/api/placeholder/80/80' },
-    { id: 123, name: 'Scyther', type: 'Bug', secondaryType: 'Flying', hp: 70, image: '/api/placeholder/80/80' },
-    { id: 124, name: 'Jynx', type: 'Ice', secondaryType: 'Psychic', hp: 65, image: '/api/placeholder/80/80' },
-    { id: 125, name: 'Electabuzz', type: 'Electric', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 126, name: 'Magmar', type: 'Fire', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 127, name: 'Pinsir', type: 'Bug', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 128, name: 'Tauros', type: 'Normal', secondaryType: null, hp: 75, image: '/api/placeholder/80/80' },
-    { id: 129, name: 'Magikarp', type: 'Water', secondaryType: null, hp: 20, image: '/api/placeholder/80/80' },
-    { id: 130, name: 'Gyarados', type: 'Water', secondaryType: 'Flying', hp: 95, image: '/api/placeholder/80/80' },
-    { id: 131, name: 'Lapras', type: 'Water', secondaryType: 'Ice', hp: 130, image: '/api/placeholder/80/80' },
-    { id: 132, name: 'Ditto', type: 'Normal', secondaryType: null, hp: 48, image: '/api/placeholder/80/80' },
-    { id: 133, name: 'Eevee', type: 'Normal', secondaryType: null, hp: 55, image: '/api/placeholder/80/80' },
-    { id: 134, name: 'Vaporeon', type: 'Water', secondaryType: null, hp: 130, image: '/api/placeholder/80/80' },
-    { id: 135, name: 'Jolteon', type: 'Electric', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 136, name: 'Flareon', type: 'Fire', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 137, name: 'Porygon', type: 'Normal', secondaryType: null, hp: 65, image: '/api/placeholder/80/80' },
-    { id: 138, name: 'Omanyte', type: 'Rock', secondaryType: 'Water', hp: 35, image: '/api/placeholder/80/80' },
-    { id: 139, name: 'Omastar', type: 'Rock', secondaryType: 'Water', hp: 70, image: '/api/placeholder/80/80' },
-    { id: 140, name: 'Kabuto', type: 'Rock', secondaryType: 'Water', hp: 30, image: '/api/placeholder/80/80' },
-    { id: 141, name: 'Kabutops', type: 'Rock', secondaryType: 'Water', hp: 60, image: '/api/placeholder/80/80' },
-    { id: 142, name: 'Aerodactyl', type: 'Rock', secondaryType: 'Flying', hp: 80, image: '/api/placeholder/80/80' },
-    { id: 143, name: 'Snorlax', type: 'Normal', secondaryType: null, hp: 160, image: '/api/placeholder/80/80' },
-    { id: 144, name: 'Articuno', type: 'Ice', secondaryType: 'Flying', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 145, name: 'Zapdos', type: 'Electric', secondaryType: 'Flying', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 146, name: 'Moltres', type: 'Fire', secondaryType: 'Flying', hp: 90, image: '/api/placeholder/80/80' },
-    { id: 147, name: 'Dratini', type: 'Dragon', secondaryType: null, hp: 41, image: '/api/placeholder/80/80' },
-    { id: 148, name: 'Dragonair', type: 'Dragon', secondaryType: null, hp: 61, image: '/api/placeholder/80/80' },
-    { id: 149, name: 'Dragonite', type: 'Dragon', secondaryType: 'Flying', hp: 91, image: '/api/placeholder/80/80' },
-    { id: 150, name: 'Mewtwo', type: 'Psychic', secondaryType: null, hp: 106, image: '/api/placeholder/80/80' },
-    { id: 151, name: 'Mew', type: 'Psychic', secondaryType: null, hp: 100, image: '/api/placeholder/80/80' }
+    { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45 },
+    { id: 2, name: 'Ivysaur', type: 'Grass', secondaryType: 'Poison', hp: 60 },
+    { id: 3, name: 'Venusaur', type: 'Grass', secondaryType: 'Poison', hp: 80 },
+    { id: 4, name: 'Charmander', type: 'Fire', secondaryType: null, hp: 39 },
+    { id: 5, name: 'Charmeleon', type: 'Fire', secondaryType: null, hp: 58 },
+    { id: 6, name: 'Charizard', type: 'Fire', secondaryType: 'Flying', hp: 78 },
+    { id: 7, name: 'Squirtle', type: 'Water', secondaryType: null, hp: 44 },
+    { id: 8, name: 'Wartortle', type: 'Water', secondaryType: null, hp: 59 },
+    { id: 9, name: 'Blastoise', type: 'Water', secondaryType: null, hp: 79 },
+    { id: 10, name: 'Caterpie', type: 'Bug', secondaryType: null, hp: 45 },
+    { id: 11, name: 'Metapod', type: 'Bug', secondaryType: null, hp: 50 },
+    { id: 12, name: 'Butterfree', type: 'Bug', secondaryType: 'Flying', hp: 60 },
+    { id: 13, name: 'Weedle', type: 'Bug', secondaryType: 'Poison', hp: 40 },
+    { id: 14, name: 'Kakuna', type: 'Bug', secondaryType: 'Poison', hp: 45 },
+    { id: 15, name: 'Beedrill', type: 'Bug', secondaryType: 'Poison', hp: 65 },
+    { id: 16, name: 'Pidgey', type: 'Normal', secondaryType: 'Flying', hp: 40 },
+    { id: 17, name: 'Pidgeotto', type: 'Normal', secondaryType: 'Flying', hp: 63 },
+    { id: 18, name: 'Pidgeot', type: 'Normal', secondaryType: 'Flying', hp: 83 },
+    { id: 19, name: 'Rattata', type: 'Normal', secondaryType: null, hp: 30 },
+    { id: 20, name: 'Raticate', type: 'Normal', secondaryType: null, hp: 55 },
+    { id: 21, name: 'Spearow', type: 'Normal', secondaryType: 'Flying', hp: 40 },
+    { id: 22, name: 'Fearow', type: 'Normal', secondaryType: 'Flying', hp: 65 },
+    { id: 23, name: 'Ekans', type: 'Poison', secondaryType: null, hp: 35 },
+    { id: 24, name: 'Arbok', type: 'Poison', secondaryType: null, hp: 60 },
+    { id: 25, name: 'Pikachu', type: 'Electric', secondaryType: null, hp: 35 },
+    { id: 26, name: 'Raichu', type: 'Electric', secondaryType: null, hp: 60 },
+    { id: 27, name: 'Sandshrew', type: 'Ground', secondaryType: null, hp: 50 },
+    { id: 28, name: 'Sandslash', type: 'Ground', secondaryType: null, hp: 75 },
+    { id: 29, name: 'Nidoran♀', type: 'Poison', secondaryType: null, hp: 55 },
+    { id: 30, name: 'Nidorina', type: 'Poison', secondaryType: null, hp: 70 },
+    { id: 31, name: 'Nidoqueen', type: 'Poison', secondaryType: 'Ground', hp: 90 },
+    { id: 32, name: 'Nidoran♂', type: 'Poison', secondaryType: null, hp: 46 },
+    { id: 33, name: 'Nidorino', type: 'Poison', secondaryType: null, hp: 61 },
+    { id: 34, name: 'Nidoking', type: 'Poison', secondaryType: 'Ground', hp: 81 },
+    { id: 35, name: 'Clefairy', type: 'Normal', secondaryType: null, hp: 70 },
+    { id: 36, name: 'Clefable', type: 'Normal', secondaryType: null, hp: 95 },
+    { id: 37, name: 'Vulpix', type: 'Fire', secondaryType: null, hp: 38 },
+    { id: 38, name: 'Ninetales', type: 'Fire', secondaryType: null, hp: 73 },
+    { id: 39, name: 'Jigglypuff', type: 'Normal', secondaryType: null, hp: 115 },
+    { id: 40, name: 'Wigglytuff', type: 'Normal', secondaryType: null, hp: 140 },
+    { id: 41, name: 'Zubat', type: 'Poison', secondaryType: 'Flying', hp: 40 },
+    { id: 42, name: 'Golbat', type: 'Poison', secondaryType: 'Flying', hp: 75 },
+    { id: 43, name: 'Oddish', type: 'Grass', secondaryType: 'Poison', hp: 45 },
+    { id: 44, name: 'Gloom', type: 'Grass', secondaryType: 'Poison', hp: 60 },
+    { id: 45, name: 'Vileplume', type: 'Grass', secondaryType: 'Poison', hp: 75 },
+    { id: 46, name: 'Paras', type: 'Bug', secondaryType: 'Grass', hp: 35 },
+    { id: 47, name: 'Parasect', type: 'Bug', secondaryType: 'Grass', hp: 60 },
+    { id: 48, name: 'Venonat', type: 'Bug', secondaryType: 'Poison', hp: 60 },
+    { id: 49, name: 'Venomoth', type: 'Bug', secondaryType: 'Poison', hp: 70 },
+    { id: 50, name: 'Diglett', type: 'Ground', secondaryType: null, hp: 10 },
+    { id: 51, name: 'Dugtrio', type: 'Ground', secondaryType: null, hp: 35 },
+    { id: 52, name: 'Meowth', type: 'Normal', secondaryType: null, hp: 40 },
+    { id: 53, name: 'Persian', type: 'Normal', secondaryType: null, hp: 65 },
+    { id: 54, name: 'Psyduck', type: 'Water', secondaryType: null, hp: 50 },
+    { id: 55, name: 'Golduck', type: 'Water', secondaryType: null, hp: 80 },
+    { id: 56, name: 'Mankey', type: 'Fighting', secondaryType: null, hp: 40 },
+    { id: 57, name: 'Primeape', type: 'Fighting', secondaryType: null, hp: 65 },
+    { id: 58, name: 'Growlithe', type: 'Fire', secondaryType: null, hp: 55 },
+    { id: 59, name: 'Arcanine', type: 'Fire', secondaryType: null, hp: 90 },
+    { id: 60, name: 'Poliwag', type: 'Water', secondaryType: null, hp: 40 },
+    { id: 61, name: 'Poliwhirl', type: 'Water', secondaryType: null, hp: 65 },
+    { id: 62, name: 'Poliwrath', type: 'Water', secondaryType: 'Fighting', hp: 90 },
+    { id: 63, name: 'Abra', type: 'Psychic', secondaryType: null, hp: 25 },
+    { id: 64, name: 'Kadabra', type: 'Psychic', secondaryType: null, hp: 40 },
+    { id: 65, name: 'Alakazam', type: 'Psychic', secondaryType: null, hp: 55 },
+    { id: 66, name: 'Machop', type: 'Fighting', secondaryType: null, hp: 70 },
+    { id: 67, name: 'Machoke', type: 'Fighting', secondaryType: null, hp: 80 },
+    { id: 68, name: 'Machamp', type: 'Fighting', secondaryType: null, hp: 90 },
+    { id: 69, name: 'Bellsprout', type: 'Grass', secondaryType: 'Poison', hp: 50 },
+    { id: 70, name: 'Weepinbell', type: 'Grass', secondaryType: 'Poison', hp: 65 },
+    { id: 71, name: 'Victreebel', type: 'Grass', secondaryType: 'Poison', hp: 80 },
+    { id: 72, name: 'Tentacool', type: 'Water', secondaryType: 'Poison', hp: 40 },
+    { id: 73, name: 'Tentacruel', type: 'Water', secondaryType: 'Poison', hp: 80 },
+    { id: 74, name: 'Geodude', type: 'Rock', secondaryType: 'Ground', hp: 40 },
+    { id: 75, name: 'Graveler', type: 'Rock', secondaryType: 'Ground', hp: 55 },
+    { id: 76, name: 'Golem', type: 'Rock', secondaryType: 'Ground', hp: 80 },
+    { id: 77, name: 'Ponyta', type: 'Fire', secondaryType: null, hp: 50 },
+    { id: 78, name: 'Rapidash', type: 'Fire', secondaryType: null, hp: 65 },
+    { id: 79, name: 'Slowpoke', type: 'Water', secondaryType: 'Psychic', hp: 90 },
+    { id: 80, name: 'Slowbro', type: 'Water', secondaryType: 'Psychic', hp: 95 },
+    { id: 81, name: 'Magnemite', type: 'Electric', secondaryType: null, hp: 25 },
+    { id: 82, name: 'Magneton', type: 'Electric', secondaryType: null, hp: 50 },
+    { id: 83, name: 'Farfetch\'d', type: 'Normal', secondaryType: 'Flying', hp: 52 },
+    { id: 84, name: 'Doduo', type: 'Normal', secondaryType: 'Flying', hp: 35 },
+    { id: 85, name: 'Dodrio', type: 'Normal', secondaryType: 'Flying', hp: 60 },
+    { id: 86, name: 'Seel', type: 'Water', secondaryType: null, hp: 65 },
+    { id: 87, name: 'Dewgong', type: 'Water', secondaryType: 'Ice', hp: 90 },
+    { id: 88, name: 'Grimer', type: 'Poison', secondaryType: null, hp: 80 },
+    { id: 89, name: 'Muk', type: 'Poison', secondaryType: null, hp: 105 },
+    { id: 90, name: 'Shellder', type: 'Water', secondaryType: null, hp: 30 },
+    { id: 91, name: 'Cloyster', type: 'Water', secondaryType: 'Ice', hp: 50 },
+    { id: 92, name: 'Gastly', type: 'Ghost', secondaryType: 'Poison', hp: 30 },
+    { id: 93, name: 'Haunter', type: 'Ghost', secondaryType: 'Poison', hp: 45 },
+    { id: 94, name: 'Gengar', type: 'Ghost', secondaryType: 'Poison', hp: 60 },
+    { id: 95, name: 'Onix', type: 'Rock', secondaryType: 'Ground', hp: 35 },
+    { id: 96, name: 'Drowzee', type: 'Psychic', secondaryType: null, hp: 60 },
+    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: null, hp: 85 },
+    { id: 98, name: 'Krabby', type: 'Water', secondaryType: null, hp: 30 },
+    { id: 99, name: 'Kingler', type: 'Water', secondaryType: null, hp: 55 },
+    { id: 100, name: 'Voltorb', type: 'Electric', secondaryType: null, hp: 40 },
+    { id: 101, name: 'Electrode', type: 'Electric', secondaryType: null, hp: 60 },
+    { id: 102, name: 'Exeggcute', type: 'Grass', secondaryType: 'Psychic', hp: 60 },
+    { id: 103, name: 'Exeggutor', type: 'Grass', secondaryType: 'Psychic', hp: 95 },
+    { id: 104, name: 'Cubone', type: 'Ground', secondaryType: null, hp: 50 },
+    { id: 105, name: 'Marowak', type: 'Ground', secondaryType: null, hp: 60 },
+    { id: 106, name: 'Hitmonlee', type: 'Fighting', secondaryType: null, hp: 50 },
+    { id: 107, name: 'Hitmonchan', type: 'Fighting', secondaryType: null, hp: 50 },
+    { id: 108, name: 'Lickitung', type: 'Normal', secondaryType: null, hp: 90 },
+    { id: 109, name: 'Koffing', type: 'Poison', secondaryType: null, hp: 40 },
+    { id: 110, name: 'Weezing', type: 'Poison', secondaryType: null, hp: 65 },
+    { id: 111, name: 'Rhyhorn', type: 'Ground', secondaryType: 'Rock', hp: 80 },
+    { id: 112, name: 'Rhydon', type: 'Ground', secondaryType: 'Rock', hp: 105 },
+    { id: 113, name: 'Chansey', type: 'Normal', secondaryType: null, hp: 250 },
+    { id: 114, name: 'Tangela', type: 'Grass', secondaryType: null, hp: 65 },
+    { id: 115, name: 'Kangaskhan', type: 'Normal', secondaryType: null, hp: 105 },
+    { id: 116, name: 'Horsea', type: 'Water', secondaryType: null, hp: 30 },
+    { id: 117, name: 'Seadra', type: 'Water', secondaryType: null, hp: 55 },
+    { id: 118, name: 'Goldeen', type: 'Water', secondaryType: null, hp: 45 },
+    { id: 119, name: 'Seaking', type: 'Water', secondaryType: null, hp: 80 },
+    { id: 120, name: 'Staryu', type: 'Water', secondaryType: null, hp: 30 },
+    { id: 121, name: 'Starmie', type: 'Water', secondaryType: 'Psychic', hp: 60 },
+    { id: 122, name: 'Mr. Mime', type: 'Psychic', secondaryType: null, hp: 40 },
+    { id: 123, name: 'Scyther', type: 'Bug', secondaryType: 'Flying', hp: 70 },
+    { id: 124, name: 'Jynx', type: 'Ice', secondaryType: 'Psychic', hp: 65 },
+    { id: 125, name: 'Electabuzz', type: 'Electric', secondaryType: null, hp: 65 },
+    { id: 126, name: 'Magmar', type: 'Fire', secondaryType: null, hp: 65 },
+    { id: 127, name: 'Pinsir', type: 'Bug', secondaryType: null, hp: 65 },
+    { id: 128, name: 'Tauros', type: 'Normal', secondaryType: null, hp: 75 },
+    { id: 129, name: 'Magikarp', type: 'Water', secondaryType: null, hp: 20 },
+    { id: 130, name: 'Gyarados', type: 'Water', secondaryType: 'Flying', hp: 95 },
+    { id: 131, name: 'Lapras', type: 'Water', secondaryType: 'Ice', hp: 130 },
+    { id: 132, name: 'Ditto', type: 'Normal', secondaryType: null, hp: 48 },
+    { id: 133, name: 'Eevee', type: 'Normal', secondaryType: null, hp: 55 },
+    { id: 134, name: 'Vaporeon', type: 'Water', secondaryType: null, hp: 130 },
+    { id: 135, name: 'Jolteon', type: 'Electric', secondaryType: null, hp: 65 },
+    { id: 136, name: 'Flareon', type: 'Fire', secondaryType: null, hp: 65 },
+    { id: 137, name: 'Porygon', type: 'Normal', secondaryType: null, hp: 65 },
+    { id: 138, name: 'Omanyte', type: 'Rock', secondaryType: 'Water', hp: 35 },
+    { id: 139, name: 'Omastar', type: 'Rock', secondaryType: 'Water', hp: 70 },
+    { id: 140, name: 'Kabuto', type: 'Rock', secondaryType: 'Water', hp: 30 },
+    { id: 141, name: 'Kabutops', type: 'Rock', secondaryType: 'Water', hp: 60 },
+    { id: 142, name: 'Aerodactyl', type: 'Rock', secondaryType: 'Flying', hp: 80 },
+    { id: 143, name: 'Snorlax', type: 'Normal', secondaryType: null, hp: 160 },
+    { id: 144, name: 'Articuno', type: 'Ice', secondaryType: 'Flying', hp: 90 },
+    { id: 145, name: 'Zapdos', type: 'Electric', secondaryType: 'Flying', hp: 90 },
+    { id: 146, name: 'Moltres', type: 'Fire', secondaryType: 'Flying', hp: 90 },
+    { id: 147, name: 'Dratini', type: 'Dragon', secondaryType: null, hp: 41 },
+    { id: 148, name: 'Dragonair', type: 'Dragon', secondaryType: null, hp: 61 },
+    { id: 149, name: 'Dragonite', type: 'Dragon', secondaryType: 'Flying', hp: 91 },
+    { id: 150, name: 'Mewtwo', type: 'Psychic', secondaryType: null, hp: 106 },
+    { id: 151, name: 'Mew', type: 'Psychic', secondaryType: null, hp: 100 }
   ];
 
   // State variables
@@ -189,7 +189,7 @@ const PokemonBattle = () => {
         socketRef.current.disconnect();
       }
     };
-  }, []);
+  }, [gameMode]);
 
   // Extended type chart for all Generation 1 types
   const typeChart = {
@@ -300,18 +300,18 @@ const PokemonBattle = () => {
     }
   };
 
-  // Generate random teams of Pokemon
+  // Generate random teams of Pokémon
   const generateRandomTeams = () => {
     const shuffledPokemon = [...originalPokemonList].sort(() => 0.5 - Math.random());
     
-    // Player team - first X Pokemon
+    // Player team - first X Pokémon
     const playerPokemonTeam = shuffledPokemon.slice(0, teamSize).map(pokemon => ({
       ...pokemon,
       currentHp: pokemon.hp,
       moves: generateMoves(pokemon.type, pokemon.secondaryType)
     }));
     
-    // Opponent team - next X Pokemon
+    // Opponent team - next X Pokémon (for singleplayer)
     const opponentPokemonTeam = shuffledPokemon.slice(teamSize, teamSize * 2).map(pokemon => ({
       ...pokemon,
       currentHp: pokemon.hp,
@@ -326,7 +326,7 @@ const PokemonBattle = () => {
     setGameState('selecting');
   };
 
-  // Generate enhanced moves based on Pokemon type(s)
+  // Generate enhanced moves based on Pokémon type(s)
   const generateMoves = (primaryType, secondaryType) => {
     const movesByType = {
       'Bug': [
@@ -442,8 +442,6 @@ const PokemonBattle = () => {
       const secondaryEffectiveness = typeChart[moveType] && typeChart[moveType][defenderSecondaryType] 
         ? typeChart[moveType][defenderSecondaryType] 
         : 1;
-      
-      // Combine effectiveness (multiply)
       effectiveness *= secondaryEffectiveness;
     }
     
@@ -463,19 +461,16 @@ const PokemonBattle = () => {
   // Initialize socket connection
   const initializeSocket = async () => {
     if (!socketRef.current) {
-      // Create a new socket connection
-      await fetch('/api/socket');
-      socketRef.current = io();
+      socketRef.current = io({ path: '/api/socket' });
       
-      // Socket event listeners
       socketRef.current.on('connect', () => {
         console.log('Connected to socket server');
+        setMultiplayerStatus('waiting');
       });
       
       socketRef.current.on('room_created', ({ roomId }) => {
         setRoomCode(roomId);
-        setBattleLog([...battleLog, `Room created! Your room code is: ${roomId}`]);
-        setBattleLog([...battleLog, `Waiting for an opponent to join...`]);
+        setBattleLog([...battleLog, `Room created! Your room code is: ${roomId}`, 'Waiting for an opponent to join...']);
       });
       
       socketRef.current.on('joined_room', ({ roomId }) => {
@@ -486,20 +481,21 @@ const PokemonBattle = () => {
       socketRef.current.on('battle_ready', ({ players }) => {
         setBattleLog([...battleLog, `Battle starting between ${players[0].name} and ${players[1].name}!`]);
         setMultiplayerStatus('connected');
-        generateRandomTeams();
+      });
+      
+      socketRef.current.on('opponent_team', ({ team }) => {
+        setOpponentTeam(team);
+        setOpponentActivePokemon(team[0]);
       });
       
       socketRef.current.on('opponent_action', (action) => {
         handleOpponentAction(action);
       });
       
-      socketRef.current.on('opponent_team', ({ team }) => {
-        setOpponentTeam(team);
-      });
-      
       socketRef.current.on('opponent_disconnected', () => {
-        setBattleLog([...battleLog, `Your opponent has disconnected.`]);
+        setBattleLog([...battleLog, 'Your opponent has disconnected.']);
         setMultiplayerStatus('disconnected');
+        setGameState('opponentWin');
       });
       
       socketRef.current.on('error', ({ message }) => {
@@ -516,12 +512,8 @@ const PokemonBattle = () => {
       return;
     }
     
-    setMultiplayerStatus('waiting');
     await initializeSocket();
-    
-    socketRef.current.emit('create_room', {
-      name: playerName,
-    });
+    socketRef.current.emit('create_room', { name: playerName });
   };
   
   // Join an existing multiplayer room
@@ -531,21 +523,16 @@ const PokemonBattle = () => {
       return;
     }
     
-    setMultiplayerStatus('waiting');
     await initializeSocket();
-    
     socketRef.current.emit('join_room', {
       roomId: roomCode,
-      playerData: {
-        name: playerName,
-      }
+      playerData: { name: playerName }
     });
   };
   
   // Handle opponent actions received via WebSocket
   const handleOpponentAction = (action) => {
     if (action.type === 'attack') {
-      // Process opponent's attack move
       const move = action.move;
       const effectiveness = getTypeEffectiveness(
         move.type, 
@@ -553,33 +540,24 @@ const PokemonBattle = () => {
         playerActivePokemon.secondaryType
       );
       
-      // Calculate damage
       const baseDamage = move.power;
       const damage = Math.floor(baseDamage * effectiveness * action.randomFactor);
       
-      // Apply damage to player's active Pokémon
       const newHp = Math.max(0, playerActivePokemon.currentHp - damage);
-      
-      // Update player Pokémon
       const updatedPlayer = { ...playerActivePokemon, currentHp: newHp };
       setPlayerActivePokemon(updatedPlayer);
       
-      // Update player team
       setPlayerTeam(prev => 
         prev.map(pokemon => 
           pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon
         )
       );
       
-      // Update battle log
       addToLog(`Opponent's ${action.pokemonName} used ${move.name}!`);
       addToLog(`Dealt ${damage} damage!`);
       
-      // Check if player's Pokémon fainted
       if (newHp === 0) {
         addToLog(`${playerActivePokemon.name} fainted!`);
-        
-        // Find next player Pokémon
         const nextPlayer = playerTeam.find(p => p.id !== playerActivePokemon.id && p.currentHp > 0);
         
         if (nextPlayer) {
@@ -593,19 +571,13 @@ const PokemonBattle = () => {
         setGameState('playerTurn');
       }
     } else if (action.type === 'switch') {
-      // Process opponent switching Pokémon
       addToLog(`Opponent switched to ${action.pokemonName}!`);
-      
-      // Update opponent's active Pokémon
       const switchedPokemon = opponentTeam.find(p => p.id === action.pokemonId);
       if (switchedPokemon) {
         setOpponentActivePokemon(switchedPokemon);
       }
-      
-      // Player's turn
       setGameState('playerTurn');
     } else if (action.type === 'chat') {
-      // Handle chat message from opponent
       const chatWindow = document.getElementById('chat-window');
       if (chatWindow) {
         const msgElement = document.createElement('div');
@@ -624,33 +596,18 @@ const PokemonBattle = () => {
       return;
     }
     
-    // Create player team with selected Pokemon
     const playerPokemonTeam = selectedPokemon.map(pokemon => ({
       ...pokemon,
       currentHp: pokemon.hp,
       moves: generateMoves(pokemon.type, pokemon.secondaryType)
     }));
     
-    // Generate a random opponent team
-    const shuffledPokemon = [...originalPokemonList]
-      .filter(p => !selectedPokemon.some(sp => sp.id === p.id))
-      .sort(() => 0.5 - Math.random());
-      
-    const opponentPokemonTeam = shuffledPokemon.slice(0, teamSize).map(pokemon => ({
-      ...pokemon,
-      currentHp: pokemon.hp,
-      moves: generateMoves(pokemon.type, pokemon.secondaryType)
-    }));
-    
     setPlayerTeam(playerPokemonTeam);
-    setOpponentTeam(opponentPokemonTeam);
     setPlayerActivePokemon(playerPokemonTeam[0]);
-    setOpponentActivePokemon(opponentPokemonTeam[0]);
     setBattleLog(['Custom team selected!', 'Click "Start Battle" to begin!']);
     setGameState('selecting');
     setShowAllPokemon(false);
     
-    // Send team info to opponent if in multiplayer mode
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
       socketRef.current.emit('team_selected', {
         roomId: roomCode,
@@ -659,15 +616,13 @@ const PokemonBattle = () => {
     }
   };
 
-  // Filter pokemon by type and/or search term
+  // Filter Pokémon by type and/or search term
   const getFilteredPokemon = () => {
     return originalPokemonList.filter(pokemon => {
       const matchesType = filterType === 'All' || 
                           pokemon.type === filterType || 
                           pokemon.secondaryType === filterType;
-                          
       const matchesSearch = pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
-      
       return matchesType && matchesSearch;
     });
   };
@@ -689,12 +644,10 @@ const PokemonBattle = () => {
       opponentActivePokemon.secondaryType
     );
     
-    // Calculate damage
     const baseDamage = move.power;
-    const randomFactor = 0.85 + Math.random() * 0.3; // Random factor between 0.85 and 1.15
+    const randomFactor = 0.85 + Math.random() * 0.3;
     const damage = Math.floor(baseDamage * effectiveness * randomFactor);
     
-    // Effectiveness message
     let effectivenessMessage = '';
     if (effectiveness > 1) {
       effectivenessMessage = "It's super effective!";
@@ -704,27 +657,21 @@ const PokemonBattle = () => {
       effectivenessMessage = "It has no effect!";
     }
     
-    // Apply damage
     const newHp = Math.max(0, opponentActivePokemon.currentHp - damage);
-    
-    // Update opponent Pokémon
     const updatedOpponent = { ...opponentActivePokemon, currentHp: newHp };
     setOpponentActivePokemon(updatedOpponent);
     
-    // Update opponent team
     setOpponentTeam(prev => 
       prev.map(pokemon => 
         pokemon.id === opponentActivePokemon.id ? updatedOpponent : pokemon
       )
     );
     
-    // Update battle log
     addToLog(`${playerActivePokemon.name} used ${move.name}!`);
     if (damage > 0) {
       addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
     }
     
-    // If in multiplayer mode, send the attack to opponent
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
       socketRef.current.emit('battle_action', {
         roomId: roomCode,
@@ -732,36 +679,27 @@ const PokemonBattle = () => {
           type: 'attack',
           pokemonName: playerActivePokemon.name,
           move: move,
-          randomFactor: randomFactor,
-          effectiveness: effectiveness
+          randomFactor: randomFactor
         }
       });
     }
     
-    // Check if opponent fainted
     if (newHp === 0) {
       addToLog(`${opponentActivePokemon.name} fainted!`);
-      
-      // Find next opponent Pokémon
       const nextOpponent = opponentTeam.find(p => p.id !== opponentActivePokemon.id && p.currentHp > 0);
       
       if (nextOpponent) {
-        // Switch to next Pokémon
         setTimeout(() => {
           setOpponentActivePokemon(nextOpponent);
           addToLog(`Opponent sent out ${nextOpponent.name}!`);
           setGameState('playerTurn');
         }, 1500);
       } else {
-        // Player wins
         addToLog('You defeated all opponent Pokémon!');
         setGameState('playerWin');
       }
     } else {
-      // Switch to opponent's turn
       setGameState('opponentTurn');
-      
-      // For single player, handle AI opponent's turn after a delay
       if (gameMode === 'singleplayer') {
         setTimeout(() => {
           handleOpponentAttack();
@@ -770,11 +708,10 @@ const PokemonBattle = () => {
     }
   };
 
-  // Handle opponent's attack
+  // Handle opponent's attack (for singleplayer)
   const handleOpponentAttack = () => {
     if (gameState !== 'opponentTurn') return;
     
-    // Choose a random move
     const moveIndex = Math.floor(Math.random() * opponentActivePokemon.moves.length);
     const move = opponentActivePokemon.moves[moveIndex];
     const effectiveness = getTypeEffectiveness(
@@ -783,12 +720,10 @@ const PokemonBattle = () => {
       playerActivePokemon.secondaryType
     );
     
-    // Calculate damage
     const baseDamage = move.power;
     const randomFactor = 0.85 + Math.random() * 0.3;
     const damage = Math.floor(baseDamage * effectiveness * randomFactor);
     
-    // Effectiveness message
     let effectivenessMessage = '';
     if (effectiveness > 1) {
       effectivenessMessage = "It's super effective!";
@@ -798,44 +733,33 @@ const PokemonBattle = () => {
       effectivenessMessage = "It has no effect!";
     }
     
-    // Apply damage
     const newHp = Math.max(0, playerActivePokemon.currentHp - damage);
-    
-    // Update player Pokémon
     const updatedPlayer = { ...playerActivePokemon, currentHp: newHp };
     setPlayerActivePokemon(updatedPlayer);
     
-    // Update player team
     setPlayerTeam(prev => 
       prev.map(pokemon => 
         pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon
       )
     );
     
-    // Update battle log
     addToLog(`${opponentActivePokemon.name} used ${move.name}!`);
     if (damage > 0) {
       addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
     }
     
-    // Check if player fainted
     if (newHp === 0) {
       addToLog(`${playerActivePokemon.name} fainted!`);
-      
-      // Find next player Pokémon
       const nextPlayer = playerTeam.find(p => p.id !== playerActivePokemon.id && p.currentHp > 0);
       
       if (nextPlayer) {
-        // Switch Pokémon view to team selection
         setGameState('switching');
         addToLog('Choose your next Pokémon!');
       } else {
-        // Opponent wins
         addToLog('All your Pokémon have fainted!');
         setGameState('opponentWin');
       }
     } else {
-      // Back to player's turn
       setGameState('playerTurn');
       setSelectedMove(null);
     }
@@ -844,13 +768,12 @@ const PokemonBattle = () => {
   // Handle player switching Pokémon
   const switchPokemon = (pokemon) => {
     if (gameState !== 'switching' && gameState !== 'playerTurn') return;
-    if (pokemon.id === playerActivePokemon.id) return; // Already active
-    if (pokemon.currentHp <= 0) return; // Fainted Pokémon
+    if (pokemon.id === playerActivePokemon.id) return;
+    if (pokemon.currentHp <= 0) return;
     
     setPlayerActivePokemon(pokemon);
     addToLog(`You switched to ${pokemon.name}!`);
     
-    // If in multiplayer mode, send the switch to opponent
     if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
       socketRef.current.emit('battle_action', {
         roomId: roomCode,
@@ -863,17 +786,13 @@ const PokemonBattle = () => {
     }
     
     if (gameState === 'playerTurn') {
-      // If voluntary switch during player's turn, opponent gets a turn
       setGameState('opponentTurn');
-      
-      // For single player, handle AI opponent's turn after a delay
       if (gameMode === 'singleplayer') {
         setTimeout(() => {
           handleOpponentAttack();
         }, 1500);
       }
     } else {
-      // If switching after a Pokémon fainted, player's turn continues
       setGameState('playerTurn');
     }
   };
@@ -897,7 +816,11 @@ const PokemonBattle = () => {
         <div className="mt-4 mb-4 flex justify-center gap-4">
           <button 
             className={`px-4 py-2 rounded ${gameMode === 'singleplayer' ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-            onClick={() => setGameMode('singleplayer')}
+            onClick={() => {
+              setGameMode('singleplayer');
+              setMultiplayerStatus('disconnected');
+              if (socketRef.current) socketRef.current.disconnect();
+            }}
           >
             Single Player
           </button>
@@ -929,9 +852,9 @@ const PokemonBattle = () => {
           <div className="flex space-x-4">
             <button 
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-              onClick={connectToMultiplayer}
+              onClick={createMultiplayerRoom}
             >
-              Find Random Opponent
+              Create Room
             </button>
             
             <div className="flex-1">
@@ -947,7 +870,7 @@ const PokemonBattle = () => {
             <button 
               className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
               disabled={!roomCode}
-              onClick={() => connectToMultiplayer()}
+              onClick={joinMultiplayerRoom}
             >
               Join Room
             </button>
@@ -955,7 +878,7 @@ const PokemonBattle = () => {
         </div>
       )}
       
-      {/* Pokemon Selection */}
+      {/* Pokémon Selection */}
       {showAllPokemon && (
         <div className="mb-6 p-4 bg-white rounded shadow">
           <h2 className="text-xl font-bold mb-2">Create Your Team</h2>
@@ -1001,7 +924,7 @@ const PokemonBattle = () => {
             </div>
           </div>
           
-          {/* Pokemon Grid */}
+          {/* Pokémon Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-4 max-h-96 overflow-y-auto">
             {getFilteredPokemon().map((pokemon) => (
               <div 
@@ -1013,15 +936,12 @@ const PokemonBattle = () => {
                 }`}
                 onClick={() => {
                   if (playerTeam.some(p => p.id === pokemon.id)) {
-                    // Remove from team
                     setPlayerTeam(playerTeam.filter(p => p.id !== pokemon.id));
                   } else if (playerTeam.length < teamSize) {
-                    // Add to team
                     setPlayerTeam([...playerTeam, pokemon]);
                   }
                 }}
               >
-                <img src={pokemon.image} alt={pokemon.name} className="w-16 h-16 mb-1" />
                 <div className="font-bold text-sm">{pokemon.name}</div>
                 <div className="text-xs">
                   {pokemon.type}
@@ -1037,7 +957,6 @@ const PokemonBattle = () => {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
             {playerTeam.map((pokemon) => (
               <div key={pokemon.id} className="flex flex-col items-center bg-blue-100 p-2 rounded shadow">
-                <img src={pokemon.image} alt={pokemon.name} className="w-16 h-16 mb-1" />
                 <div className="font-bold text-sm">{pokemon.name}</div>
                 <div className="text-xs">
                   {pokemon.type}
@@ -1078,7 +997,6 @@ const PokemonBattle = () => {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
             {playerTeam.map((pokemon) => (
               <div key={pokemon.id} className="flex flex-col items-center bg-white p-2 rounded shadow">
-                <img src={pokemon.image} alt={pokemon.name} className="w-16 h-16 mb-1" />
                 <div className="font-bold text-sm">{pokemon.name}</div>
                 <div className="text-xs">
                   {pokemon.type}
@@ -1093,7 +1011,6 @@ const PokemonBattle = () => {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
             {opponentTeam.map((pokemon) => (
               <div key={pokemon.id} className="flex flex-col items-center bg-white p-2 rounded shadow">
-                <img src={pokemon.image} alt={pokemon.name} className="w-16 h-16 mb-1" />
                 <div className="font-bold text-sm">{pokemon.name}</div>
                 <div className="text-xs">
                   {pokemon.type}
@@ -1108,12 +1025,14 @@ const PokemonBattle = () => {
             <button 
               className="bg-yellow-500 text-black font-bold border-2 border-black scale-105 shadow-lg transform px-4 py-2 rounded"
               onClick={startBattle}
+              disabled={gameMode === 'multiplayer' && multiplayerStatus !== 'connected'}
             >
               Start Battle!
             </button>
             <button 
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               onClick={generateRandomTeams}
+              disabled={gameMode === 'multiplayer' && multiplayerStatus === 'connected'}
             >
               Generate New Teams
             </button>
@@ -1156,7 +1075,6 @@ const PokemonBattle = () => {
             {/* Player Pokémon */}
             <div className="flex flex-col items-center mb-4 md:mb-0">
               <div className="text-lg font-bold">{playerActivePokemon?.name}</div>
-              <img src={playerActivePokemon?.image} alt={playerActivePokemon?.name} className="my-2" />
               <div className="w-32 bg-gray-300 rounded-full h-4">
                 <div
                   className="bg-green-500 h-4 rounded-full transition-all duration-300"
@@ -1178,7 +1096,6 @@ const PokemonBattle = () => {
             {/* Opponent Pokémon */}
             <div className="flex flex-col items-center">
               <div className="text-lg font-bold">{opponentActivePokemon?.name}</div>
-              <img src={opponentActivePokemon?.image} alt={opponentActivePokemon?.name} className="my-2" />
               <div className="w-32 bg-gray-300 rounded-full h-4">
                 <div
                   className="bg-red-500 h-4 rounded-full transition-all duration-300"
@@ -1276,7 +1193,6 @@ const PokemonBattle = () => {
                   onKeyPress={(e) => {
                     if (e.key === 'Enter' && e.target.value.trim() && socketRef.current) {
                       const chatMsg = e.target.value.trim();
-                      // Add message to local chat
                       const chatWindow = document.getElementById('chat-window');
                       if (chatWindow) {
                         const msgElement = document.createElement('div');
@@ -1285,8 +1201,6 @@ const PokemonBattle = () => {
                         chatWindow.appendChild(msgElement);
                         chatWindow.scrollTop = chatWindow.scrollHeight;
                       }
-                      
-                      // Send message to opponent
                       socketRef.current.emit('battle_action', {
                         roomId: roomCode,
                         action: {
@@ -1295,8 +1209,6 @@ const PokemonBattle = () => {
                           sender: playerName
                         }
                       });
-                      
-                      // Clear input
                       e.target.value = '';
                     }
                   }}
@@ -1307,7 +1219,6 @@ const PokemonBattle = () => {
                     const input = e.target.previousSibling;
                     if (input.value.trim() && socketRef.current) {
                       const chatMsg = input.value.trim();
-                      // Add message to local chat
                       const chatWindow = document.getElementById('chat-window');
                       if (chatWindow) {
                         const msgElement = document.createElement('div');
@@ -1316,8 +1227,6 @@ const PokemonBattle = () => {
                         chatWindow.appendChild(msgElement);
                         chatWindow.scrollTop = chatWindow.scrollHeight;
                       }
-                      
-                      // Send message to opponent
                       socketRef.current.emit('battle_action', {
                         roomId: roomCode,
                         action: {
@@ -1326,8 +1235,6 @@ const PokemonBattle = () => {
                           sender: playerName
                         }
                       });
-                      
-                      // Clear input
                       input.value = '';
                     }
                   }}
