@@ -5,157 +5,157 @@ const PokemonBattle = () => {
   const socketRef = useRef(null);
 
   const originalPokemonList = [
-    { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45 },
-    { id: 2, name: 'Ivysaur', type: 'Grass', secondaryType: 'Poison', hp: 60 },
-    { id: 3, name: 'Venusaur', type: 'Grass', secondaryType: 'Poison', hp: 80 },
-    { id: 4, name: 'Charmander', type: 'Fire', secondaryType: null, hp: 39 },
-    { id: 5, name: 'Charmeleon', type: 'Fire', secondaryType: null, hp: 58 },
-    { id: 6, name: 'Charizard', type: 'Fire', secondaryType: 'Flying', hp: 78 },
-    { id: 7, name: 'Squirtle', type: 'Water', secondaryType: null, hp: 44 },
-    { id: 8, name: 'Wartortle', type: 'Water', secondaryType: null, hp: 59 },
-    { id: 9, name: 'Blastoise', type: 'Water', secondaryType: null, hp: 79 },
-    { id: 10, name: 'Caterpie', type: 'Bug', secondaryType: null, hp: 45 },
-    { id: 11, name: 'Metapod', type: 'Bug', secondaryType: null, hp: 50 },
-    { id: 12, name: 'Butterfree', type: 'Bug', secondaryType: 'Flying', hp: 60 },
-    { id: 13, name: 'Weedle', type: 'Bug', secondaryType: 'Poison', hp: 40 },
-    { id: 14, name: 'Kakuna', type: 'Bug', secondaryType: 'Poison', hp: 45 },
-    { id: 15, name: 'Beedrill', type: 'Bug', secondaryType: 'Poison', hp: 65 },
-    { id: 16, name: 'Pidgey', type: 'Normal', secondaryType: 'Flying', hp: 40 },
-    { id: 17, name: 'Pidgeotto', type: 'Normal', secondaryType: 'Flying', hp: 63 },
-    { id: 18, name: 'Pidgeot', type: 'Normal', secondaryType: 'Flying', hp: 83 },
-    { id: 19, name: 'Rattata', type: 'Normal', secondaryType: null, hp: 30 },
-    { id: 20, name: 'Raticate', type: 'Normal', secondaryType: null, hp: 55 },
-    { id: 21, name: 'Spearow', type: 'Normal', secondaryType: 'Flying', hp: 40 },
-    { id: 22, name: 'Fearow', type: 'Normal', secondaryType: 'Flying', hp: 65 },
-    { id: 23, name: 'Ekans', type: 'Poison', secondaryType: null, hp: 35 },
-    { id: 24, name: 'Arbok', type: 'Poison', secondaryType: null, hp: 60 },
-    { id: 25, name: 'Pikachu', type: 'Electric', secondaryType: null, hp: 35 },
-    { id: 26, name: 'Raichu', type: 'Electric', secondaryType: null, hp: 60 },
-    { id: 27, name: 'Sandshrew', type: 'Ground', secondaryType: null, hp: 50 },
-    { id: 28, name: 'Sandslash', type: 'Ground', secondaryType: null, hp: 75 },
-    { id: 29, name: 'Nidoran♀', type: 'Poison', secondaryType: null, hp: 55 },
-    { id: 30, name: 'Nidorina', type: 'Poison', secondaryType: null, hp: 70 },
-    { id: 31, name: 'Nidoqueen', type: 'Poison', secondaryType: 'Ground', hp: 90 },
-    { id: 32, name: 'Nidoran♂', type: 'Poison', secondaryType: null, hp: 46 },
-    { id: 33, name: 'Nidorino', type: 'Poison', secondaryType: null, hp: 61 },
-    { id: 34, name: 'Nidoking', type: 'Poison', secondaryType: 'Ground', hp: 81 },
-    { id: 35, name: 'Clefairy', type: 'Normal', secondaryType: null, hp: 70 },
-    { id: 36, name: 'Clefable', type: 'Normal', secondaryType: null, hp: 95 },
-    { id: 37, name: 'Vulpix', type: 'Fire', secondaryType: null, hp: 38 },
-    { id: 38, name: 'Ninetales', type: 'Fire', secondaryType: null, hp: 73 },
-    { id: 39, name: 'Jigglypuff', type: 'Normal', secondaryType: null, hp: 115 },
-    { id: 40, name: 'Wigglytuff', type: 'Normal', secondaryType: null, hp: 140 },
-    { id: 41, name: 'Zubat', type: 'Poison', secondaryType: 'Flying', hp: 40 },
-    { id: 42, name: 'Golbat', type: 'Poison', secondaryType: 'Flying', hp: 75 },
-    { id: 43, name: 'Oddish', type: 'Grass', secondaryType: 'Poison', hp: 45 },
-    { id: 44, name: 'Gloom', type: 'Grass', secondaryType: 'Poison', hp: 60 },
-    { id: 45, name: 'Vileplume', type: 'Grass', secondaryType: 'Poison', hp: 75 },
-    { id: 46, name: 'Paras', type: 'Bug', secondaryType: 'Grass', hp: 35 },
-    { id: 47, name: 'Parasect', type: 'Bug', secondaryType: 'Grass', hp: 60 },
-    { id: 48, name: 'Venonat', type: 'Bug', secondaryType: 'Poison', hp: 60 },
-    { id: 49, name: 'Venomoth', type: 'Bug', secondaryType: 'Poison', hp: 70 },
-    { id: 50, name: 'Diglett', type: 'Ground', secondaryType: null, hp: 10 },
-    { id: 51, name: 'Dugtrio', type: 'Ground', secondaryType: null, hp: 35 },
-    { id: 52, name: 'Meowth', type: 'Normal', secondaryType: null, hp: 40 },
-    { id: 53, name: 'Persian', type: 'Normal', secondaryType: null, hp: 65 },
-    { id: 54, name: 'Psyduck', type: 'Water', secondaryType: null, hp: 50 },
-    { id: 55, name: 'Golduck', type: 'Water', secondaryType: null, hp: 80 },
-    { id: 56, name: 'Mankey', type: 'Fighting', secondaryType: null, hp: 40 },
-    { id: 57, name: 'Primeape', type: 'Fighting', secondaryType: null, hp: 65 },
-    { id: 58, name: 'Growlithe', type: 'Fire', secondaryType: null, hp: 55 },
-    { id: 59, name: 'Arcanine', type: 'Fire', secondaryType: null, hp: 90 },
-    { id: 60, name: 'Poliwag', type: 'Water', secondaryType: null, hp: 40 },
-    { id: 61, name: 'Poliwhirl', type: 'Water', secondaryType: null, hp: 65 },
-    { id: 62, name: 'Poliwrath', type: 'Water', secondaryType: 'Fighting', hp: 90 },
-    { id: 63, name: 'Abra', type: 'Psychic', secondaryType: null, hp: 25 },
-    { id: 64, name: 'Kadabra', type: 'Psychic', secondaryType: null, hp: 40 },
-    { id: 65, name: 'Alakazam', type: 'Psychic', secondaryType: null, hp: 55 },
-    { id: 66, name: 'Machop', type: 'Fighting', secondaryType: null, hp: 70 },
-    { id: 67, name: 'Machoke', type: 'Fighting', secondaryType: null, hp: 80 },
-    { id: 68, name: 'Machamp', type: 'Fighting', secondaryType: null, hp: 90 },
-    { id: 69, name: 'Bellsprout', type: 'Grass', secondaryType: 'Poison', hp: 50 },
-    { id: 70, name: 'Weepinbell', type: 'Grass', secondaryType: 'Poison', hp: 65 },
-    { id: 71, name: 'Victreebel', type: 'Grass', secondaryType: 'Poison', hp: 80 },
-    { id: 72, name: 'Tentacool', type: 'Water', secondaryType: 'Poison', hp: 40 },
-    { id: 73, name: 'Tentacruel', type: 'Water', secondaryType: 'Poison', hp: 80 },
-    { id: 74, name: 'Geodude', type: 'Rock', secondaryType: 'Ground', hp: 40 },
-    { id: 75, name: 'Graveler', type: 'Rock', secondaryType: 'Ground', hp: 55 },
-    { id: 76, name: 'Golem', type: 'Rock', secondaryType: 'Ground', hp: 80 },
-    { id: 77, name: 'Ponyta', type: 'Fire', secondaryType: null, hp: 50 },
-    { id: 78, name: 'Rapidash', type: 'Fire', secondaryType: null, hp: 65 },
-    { id: 79, name: 'Slowpoke', type: 'Water', secondaryType: 'Psychic', hp: 90 },
-    { id: 80, name: 'Slowbro', type: 'Water', secondaryType: 'Psychic', hp: 95 },
-    { id: 81, name: 'Magnemite', type: 'Electric', secondaryType: null, hp: 25 },
-    { id: 82, name: 'Magneton', type: 'Electric', secondaryType: null, hp: 50 },
-    { id: 83, name: 'Farfetch\'d', type: 'Normal', secondaryType: 'Flying', hp: 52 },
-    { id: 84, name: 'Doduo', type: 'Normal', secondaryType: 'Flying', hp: 35 },
-    { id: 85, name: 'Dodrio', type: 'Normal', secondaryType: 'Flying', hp: 60 },
-    { id: 86, name: 'Seel', type: 'Water', secondaryType: null, hp: 65 },
-    { id: 87, name: 'Dewgong', type: 'Water', secondaryType: 'Ice', hp: 90 },
-    { id: 88, name: 'Grimer', type: 'Poison', secondaryType: null, hp: 80 },
-    { id: 89, name: 'Muk', type: 'Poison', secondaryType: null, hp: 105 },
-    { id: 90, name: 'Shellder', type: 'Water', secondaryType: null, hp: 30 },
-    { id: 91, name: 'Cloyster', type: 'Water', secondaryType: 'Ice', hp: 50 },
-    { id: 92, name: 'Gastly', type: 'Ghost', secondaryType: 'Poison', hp: 30 },
-    { id: 93, name: 'Haunter', type: 'Ghost', secondaryType: 'Poison', hp: 45 },
-    { id: 94, name: 'Gengar', type: 'Ghost', secondaryType: 'Poison', hp: 60 },
-    { id: 95, name: 'Onix', type: 'Rock', secondaryType: 'Ground', hp: 35 },
-    { id: 96, name: 'Drowzee', type: 'Psychic', secondaryType: null, hp: 60 },
-    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: null, hp: 85 },
-    { id: 98, name: 'Krabby', type: 'Water', secondaryType: null, hp: 30 },
-    { id: 99, name: 'Kingler', type: 'Water', secondaryType: null, hp: 55 },
-    { id: 100, name: 'Voltorb', type: 'Electric', secondaryType: null, hp: 40 },
-    { id: 101, name: 'Electrode', type: 'Electric', secondaryType: null, hp: 60 },
-    { id: 102, name: 'Exeggcute', type: 'Grass', secondaryType: 'Psychic', hp: 60 },
-    { id: 103, name: 'Exeggutor', type: 'Grass', secondaryType: 'Psychic', hp: 95 },
-    { id: 104, name: 'Cubone', type: 'Ground', secondaryType: null, hp: 50 },
-    { id: 105, name: 'Marowak', type: 'Ground', secondaryType: null, hp: 60 },
-    { id: 106, name: 'Hitmonlee', type: 'Fighting', secondaryType: null, hp: 50 },
-    { id: 107, name: 'Hitmonchan', type: 'Fighting', secondaryType: null, hp: 50 },
-    { id: 108, name: 'Lickitung', type: 'Normal', secondaryType: null, hp: 90 },
-    { id: 109, name: 'Koffing', type: 'Poison', secondaryType: null, hp: 40 },
-    { id: 110, name: 'Weezing', type: 'Poison', secondaryType: null, hp: 65 },
-    { id: 111, name: 'Rhyhorn', type: 'Ground', secondaryType: 'Rock', hp: 80 },
-    { id: 112, name: 'Rhydon', type: 'Ground', secondaryType: 'Rock', hp: 105 },
-    { id: 113, name: 'Chansey', type: 'Normal', secondaryType: null, hp: 250 },
-    { id: 114, name: 'Tangela', type: 'Grass', secondaryType: null, hp: 65 },
-    { id: 115, name: 'Kangaskhan', type: 'Normal', secondaryType: null, hp: 105 },
-    { id: 116, name: 'Horsea', type: 'Water', secondaryType: null, hp: 30 },
-    { id: 117, name: 'Seadra', type: 'Water', secondaryType: null, hp: 55 },
-    { id: 118, name: 'Goldeen', type: 'Water', secondaryType: null, hp: 45 },
-    { id: 119, name: 'Seaking', type: 'Water', secondaryType: null, hp: 80 },
-    { id: 120, name: 'Staryu', type: 'Water', secondaryType: null, hp: 30 },
-    { id: 121, name: 'Starmie', type: 'Water', secondaryType: 'Psychic', hp: 60 },
-    { id: 122, name: 'Mr. Mime', type: 'Psychic', secondaryType: null, hp: 40 },
-    { id: 123, name: 'Scyther', type: 'Bug', secondaryType: 'Flying', hp: 70 },
-    { id: 124, name: 'Jynx', type: 'Ice', secondaryType: 'Psychic', hp: 65 },
-    { id: 125, name: 'Electabuzz', type: 'Electric', secondaryType: null, hp: 65 },
-    { id: 126, name: 'Magmar', type: 'Fire', secondaryType: null, hp: 65 },
-    { id: 127, name: 'Pinsir', type: 'Bug', secondaryType: null, hp: 65 },
-    { id: 128, name: 'Tauros', type: 'Normal', secondaryType: null, hp: 75 },
-    { id: 129, name: 'Magikarp', type: 'Water', secondaryType: null, hp: 20 },
-    { id: 130, name: 'Gyarados', type: 'Water', secondaryType: 'Flying', hp: 95 },
-    { id: 131, name: 'Lapras', type: 'Water', secondaryType: 'Ice', hp: 130 },
-    { id: 132, name: 'Ditto', type: 'Normal', secondaryType: null, hp: 48 },
-    { id: 133, name: 'Eevee', type: 'Normal', secondaryType: null, hp: 55 },
-    { id: 134, name: 'Vaporeon', type: 'Water', secondaryType: null, hp: 130 },
-    { id: 135, name: 'Jolteon', type: 'Electric', secondaryType: null, hp: 65 },
-    { id: 136, name: 'Flareon', type: 'Fire', secondaryType: null, hp: 65 },
-    { id: 137, name: 'Porygon', type: 'Normal', secondaryType: null, hp: 65 },
-    { id: 138, name: 'Omanyte', type: 'Rock', secondaryType: 'Water', hp: 35 },
-    { id: 139, name: 'Omastar', type: 'Rock', secondaryType: 'Water', hp: 70 },
-    { id: 140, name: 'Kabuto', type: 'Rock', secondaryType: 'Water', hp: 30 },
-    { id: 141, name: 'Kabutops', type: 'Rock', secondaryType: 'Water', hp: 60 },
-    { id: 142, name: 'Aerodactyl', type: 'Rock', secondaryType: 'Flying', hp: 80 },
-    { id: 143, name: 'Snorlax', type: 'Normal', secondaryType: null, hp: 160 },
-    { id: 144, name: 'Articuno', type: 'Ice', secondaryType: 'Flying', hp: 90 },
-    { id: 145, name: 'Zapdos', type: 'Electric', secondaryType: 'Flying', hp: 90 },
-    { id: 146, name: 'Moltres', type: 'Fire', secondaryType: 'Flying', hp: 90 },
-    { id: 147, name: 'Dratini', type: 'Dragon', secondaryType: null, hp: 41 },
-    { id: 148, name: 'Dragonair', type: 'Dragon', secondaryType: null, hp: 61 },
-    { id: 149, name: 'Dragonite', type: 'Dragon', secondaryType: 'Flying', hp: 91 },
-    { id: 150, name: 'Mewtwo', type: 'Psychic', secondaryType: null, hp: 106 },
-    { id: 151, name: 'Mew', type: 'Psychic', secondaryType: null, hp: 100 }
+    { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png' },
+    { id: 2, name: 'Ivysaur', type: 'Grass', secondaryType: 'Poison', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png' },
+    { id: 3, name: 'Venusaur', type: 'Grass', secondaryType: 'Poison', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/3.png' },
+    { id: 4, name: 'Charmander', type: 'Fire', secondaryType: null, hp: 39, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png' },
+    { id: 5, name: 'Charmeleon', type: 'Fire', secondaryType: null, hp: 58, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/5.png' },
+    { id: 6, name: 'Charizard', type: 'Fire', secondaryType: 'Flying', hp: 78, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png' },
+    { id: 7, name: 'Squirtle', type: 'Water', secondaryType: null, hp: 44, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png' },
+    { id: 8, name: 'Wartortle', type: 'Water', secondaryType: null, hp: 59, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/8.png' },
+    { id: 9, name: 'Blastoise', type: 'Water', secondaryType: null, hp: 79, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/9.png' },
+    { id: 10, name: 'Caterpie', type: 'Bug', secondaryType: null, hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10.png' },
+    { id: 11, name: 'Metapod', type: 'Bug', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/11.png' },
+    { id: 12, name: 'Butterfree', type: 'Bug', secondaryType: 'Flying', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/12.png' },
+    { id: 13, name: 'Weedle', type: 'Bug', secondaryType: 'Poison', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png' },
+    { id: 14, name: 'Kakuna', type: 'Bug', secondaryType: 'Poison', hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/14.png' },
+    { id: 15, name: 'Beedrill', type: 'Bug', secondaryType: 'Poison', hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/15.png' },
+    { id: 16, name: 'Pidgey', type: 'Normal', secondaryType: 'Flying', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/16.png' },
+    { id: 17, name: 'Pidgeotto', type: 'Normal', secondaryType: 'Flying', hp: 63, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/17.png' },
+    { id: 18, name: 'Pidgeot', type: 'Normal', secondaryType: 'Flying', hp: 83, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/18.png' },
+    { id: 19, name: 'Rattata', type: 'Normal', secondaryType: null, hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/19.png' },
+    { id: 20, name: 'Raticate', type: 'Normal', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/20.png' },
+    { id: 21, name: 'Spearow', type: 'Normal', secondaryType: 'Flying', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/21.png' },
+    { id: 22, name: 'Fearow', type: 'Normal', secondaryType: 'Flying', hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/22.png' },
+    { id: 23, name: 'Ekans', type: 'Poison', secondaryType: null, hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/23.png' },
+    { id: 24, name: 'Arbok', type: 'Poison', secondaryType: null, hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/24.png' },
+    { id: 25, name: 'Pikachu', type: 'Electric', secondaryType: null, hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png' },
+    { id: 26, name: 'Raichu', type: 'Electric', secondaryType: null, hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/26.png' },
+    { id: 27, name: 'Sandshrew', type: 'Ground', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/27.png' },
+    { id: 28, name: 'Sandslash', type: 'Ground', secondaryType: null, hp: 75, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/28.png' },
+    { id: 29, name: 'Nidoran♀', type: 'Poison', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/29.png' },
+    { id: 30, name: 'Nidorina', type: 'Poison', secondaryType: null, hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/30.png' },
+    { id: 31, name: 'Nidoqueen', type: 'Poison', secondaryType: 'Ground', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/31.png' },
+    { id: 32, name: 'Nidoran♂', type: 'Poison', secondaryType: null, hp: 46, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/32.png' },
+    { id: 33, name: 'Nidorino', type: 'Poison', secondaryType: null, hp: 61, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/33.png' },
+    { id: 34, name: 'Nidoking', type: 'Poison', secondaryType: 'Ground', hp: 81, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/34.png' },
+    { id: 35, name: 'Clefairy', type: 'Normal', secondaryType: null, hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png' },
+    { id: 36, name: 'Clefable', type: 'Normal', secondaryType: null, hp: 95, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/36.png' },
+    { id: 37, name: 'Vulpix', type: 'Fire', secondaryType: null, hp: 38, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/37.png' },
+    { id: 38, name: 'Ninetales', type: 'Fire', secondaryType: null, hp: 73, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/38.png' },
+    { id: 39, name: 'Jigglypuff', type: 'Normal', secondaryType: null, hp: 115, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png' },
+    { id: 40, name: 'Wigglytuff', type: 'Normal', secondaryType: null, hp: 140, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/40.png' },
+    { id: 41, name: 'Zubat', type: 'Poison', secondaryType: 'Flying', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/41.png' },
+    { id: 42, name: 'Golbat', type: 'Poison', secondaryType: 'Flying', hp: 75, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/42.png' },
+    { id: 43, name: 'Oddish', type: 'Grass', secondaryType: 'Poison', hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/43.png' },
+    { id: 44, name: 'Gloom', type: 'Grass', secondaryType: 'Poison', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/44.png' },
+    { id: 45, name: 'Vileplume', type: 'Grass', secondaryType: 'Poison', hp: 75, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/45.png' },
+    { id: 46, name: 'Paras', type: 'Bug', secondaryType: 'Grass', hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/46.png' },
+    { id: 47, name: 'Parasect', type: 'Bug', secondaryType: 'Grass', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/47.png' },
+    { id: 48, name: 'Venonat', type: 'Bug', secondaryType: 'Poison', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/48.png' },
+    { id: 49, name: 'Venomoth', type: 'Bug', secondaryType: 'Poison', hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/49.png' },
+    { id: 50, name: 'Diglett', type: 'Ground', secondaryType: null, hp: 10, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/50.png' },
+    { id: 51, name: 'Dugtrio', type: 'Ground', secondaryType: null, hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/51.png' },
+    { id: 52, name: 'Meowth', type: 'Normal', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/52.png' },
+    { id: 53, name: 'Persian', type: 'Normal', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/53.png' },
+    { id: 54, name: 'Psyduck', type: 'Water', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/54.png' },
+    { id: 55, name: 'Golduck', type: 'Water', secondaryType: null, hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/55.png' },
+    { id: 56, name: 'Mankey', type: 'Fighting', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/56.png' },
+    { id: 57, name: 'Primeape', type: 'Fighting', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/57.png' },
+    { id: 58, name: 'Growlithe', type: 'Fire', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/58.png' },
+    { id: 59, name: 'Arcanine', type: 'Fire', secondaryType: null, hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/59.png' },
+    { id: 60, name: 'Poliwag', type: 'Water', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/60.png' },
+    { id: 61, name: 'Poliwhirl', type: 'Water', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/61.png' },
+    { id: 62, name: 'Poliwrath', type: 'Water', secondaryType: 'Fighting', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/62.png' },
+    { id: 63, name: 'Abra', type: 'Psychic', secondaryType: null, hp: 25, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/63.png' },
+    { id: 64, name: 'Kadabra', type: 'Psychic', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/64.png' },
+    { id: 65, name: 'Alakazam', type: 'Psychic', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/65.png' },
+    { id: 66, name: 'Machop', type: 'Fighting', secondaryType: null, hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/66.png' },
+    { id: 67, name: 'Machoke', type: 'Fighting', secondaryType: null, hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/67.png' },
+    { id: 68, name: 'Machamp', type: 'Fighting', secondaryType: null, hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/68.png' },
+    { id: 69, name: 'Bellsprout', type: 'Grass', secondaryType: 'Poison', hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/69.png' },
+    { id: 70, name: 'Weepinbell', type: 'Grass', secondaryType: 'Poison', hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/70.png' },
+    { id: 71, name: 'Victreebel', type: 'Grass', secondaryType: 'Poison', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/71.png' },
+    { id: 72, name: 'Tentacool', type: 'Water', secondaryType: 'Poison', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/72.png' },
+    { id: 73, name: 'Tentacruel', type: 'Water', secondaryType: 'Poison', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/73.png' },
+    { id: 74, name: 'Geodude', type: 'Rock', secondaryType: 'Ground', hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/74.png' },
+    { id: 75, name: 'Graveler', type: 'Rock', secondaryType: 'Ground', hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/75.png' },
+    { id: 76, name: 'Golem', type: 'Rock', secondaryType: 'Ground', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/76.png' },
+    { id: 77, name: 'Ponyta', type: 'Fire', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/77.png' },
+    { id: 78, name: 'Rapidash', type: 'Fire', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/78.png' },
+    { id: 79, name: 'Slowpoke', type: 'Water', secondaryType: 'Psychic', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/79.png' },
+    { id: 80, name: 'Slowbro', type: 'Water', secondaryType: 'Psychic', hp: 95, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/80.png' },
+    { id: 81, name: 'Magnemite', type: 'Electric', secondaryType: null, hp: 25, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/81.png' },
+    { id: 82, name: 'Magneton', type: 'Electric', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/82.png' },
+    { id: 83, name: 'Farfetch\'d', type: 'Normal', secondaryType: 'Flying', hp: 52, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/83.png' },
+    { id: 84, name: 'Doduo', type: 'Normal', secondaryType: 'Flying', hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/84.png' },
+    { id: 85, name: 'Dodrio', type: 'Normal', secondaryType: 'Flying', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/85.png' },
+    { id: 86, name: 'Seel', type: 'Water', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/86.png' },
+    { id: 87, name: 'Dewgong', type: 'Water', secondaryType: 'Ice', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/87.png' },
+    { id: 88, name: 'Grimer', type: 'Poison', secondaryType: null, hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/88.png' },
+    { id: 89, name: 'Muk', type: 'Poison', secondaryType: null, hp: 105, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/89.png' },
+    { id: 90, name: 'Shellder', type: 'Water', secondaryType: null, hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/90.png' },
+    { id: 91, name: 'Cloyster', type: 'Water', secondaryType: 'Ice', hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/91.png' },
+    { id: 92, name: 'Gastly', type: 'Ghost', secondaryType: 'Poison', hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/92.png' },
+    { id: 93, name: 'Haunter', type: 'Ghost', secondaryType: 'Poison', hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/93.png' },
+    { id: 94, name: 'Gengar', type: 'Ghost', secondaryType: 'Poison', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png' },
+    { id: 95, name: 'Onix', type: 'Rock', secondaryType: 'Ground', hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/95.png' },
+    { id: 96, name: 'Drowzee', type: 'Psychic', secondaryType: null, hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/96.png' },
+    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: null, hp: 85, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/97.png' },
+    { id: 98, name: 'Krabby', type: 'Water', secondaryType: null, hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/98.png' },
+    { id: 99, name: 'Kingler', type: 'Water', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/99.png' },
+    { id: 100, name: 'Voltorb', type: 'Electric', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/100.png' },
+    { id: 101, name: 'Electrode', type: 'Electric', secondaryType: null, hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/101.png' },
+    { id: 102, name: 'Exeggcute', type: 'Grass', secondaryType: 'Psychic', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/102.png' },
+    { id: 103, name: 'Exeggutor', type: 'Grass', secondaryType: 'Psychic', hp: 95, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/103.png' },
+    { id: 104, name: 'Cubone', type: 'Ground', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/104.png' },
+    { id: 105, name: 'Marowak', type: 'Ground', secondaryType: null, hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/105.png' },
+    { id: 106, name: 'Hitmonlee', type: 'Fighting', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/106.png' },
+    { id: 107, name: 'Hitmonchan', type: 'Fighting', secondaryType: null, hp: 50, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/107.png' },
+    { id: 108, name: 'Lickitung', type: 'Normal', secondaryType: null, hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/108.png' },
+    { id: 109, name: 'Koffing', type: 'Poison', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/109.png' },
+    { id: 110, name: 'Weezing', type: 'Poison', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/110.png' },
+    { id: 111, name: 'Rhyhorn', type: 'Ground', secondaryType: 'Rock', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/111.png' },
+    { id: 112, name: 'Rhydon', type: 'Ground', secondaryType: 'Rock', hp: 105, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/112.png' },
+    { id: 113, name: 'Chansey', type: 'Normal', secondaryType: null, hp: 250, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/113.png' },
+    { id: 114, name: 'Tangela', type: 'Grass', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/114.png' },
+    { id: 115, name: 'Kangaskhan', type: 'Normal', secondaryType: null, hp: 105, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/115.png' },
+    { id: 116, name: 'Horsea', type: 'Water', secondaryType: null, hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/116.png' },
+    { id: 117, name: 'Seadra', type: 'Water', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/117.png' },
+    { id: 118, name: 'Goldeen', type: 'Water', secondaryType: null, hp: 45, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/118.png' },
+    { id: 119, name: 'Seaking', type: 'Water', secondaryType: null, hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/119.png' },
+    { id: 120, name: 'Staryu', type: 'Water', secondaryType: null, hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/120.png' },
+    { id: 121, name: 'Starmie', type: 'Water', secondaryType: 'Psychic', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/121.png' },
+    { id: 122, name: 'Mr. Mime', type: 'Psychic', secondaryType: null, hp: 40, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/122.png' },
+    { id: 123, name: 'Scyther', type: 'Bug', secondaryType: 'Flying', hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/123.png' },
+    { id: 124, name: 'Jynx', type: 'Ice', secondaryType: 'Psychic', hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/124.png' },
+    { id: 125, name: 'Electabuzz', type: 'Electric', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/125.png' },
+    { id: 126, name: 'Magmar', type: 'Fire', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/126.png' },
+    { id: 127, name: 'Pinsir', type: 'Bug', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/127.png' },
+    { id: 128, name: 'Tauros', type: 'Normal', secondaryType: null, hp: 75, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/128.png' },
+    { id: 129, name: 'Magikarp', type: 'Water', secondaryType: null, hp: 20, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/129.png' },
+    { id: 130, name: 'Gyarados', type: 'Water', secondaryType: 'Flying', hp: 95, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png' },
+    { id: 131, name: 'Lapras', type: 'Water', secondaryType: 'Ice', hp: 130, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/131.png' },
+    { id: 132, name: 'Ditto', type: 'Normal', secondaryType: null, hp: 48, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png' },
+    { id: 133, name: 'Eevee', type: 'Normal', secondaryType: null, hp: 55, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png' },
+    { id: 134, name: 'Vaporeon', type: 'Water', secondaryType: null, hp: 130, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/134.png' },
+    { id: 135, name: 'Jolteon', type: 'Electric', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/135.png' },
+    { id: 136, name: 'Flareon', type: 'Fire', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/136.png' },
+    { id: 137, name: 'Porygon', type: 'Normal', secondaryType: null, hp: 65, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/137.png' },
+    { id: 138, name: 'Omanyte', type: 'Rock', secondaryType: 'Water', hp: 35, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/138.png' },
+    { id: 139, name: 'Omastar', type: 'Rock', secondaryType: 'Water', hp: 70, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/139.png' },
+    { id: 140, name: 'Kabuto', type: 'Rock', secondaryType: 'Water', hp: 30, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/140.png' },
+    { id: 141, name: 'Kabutops', type: 'Rock', secondaryType: 'Water', hp: 60, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/141.png' },
+    { id: 142, name: 'Aerodactyl', type: 'Rock', secondaryType: 'Flying', hp: 80, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/142.png' },
+    { id: 143, name: 'Snorlax', type: 'Normal', secondaryType: null, hp: 160, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png' },
+    { id: 144, name: 'Articuno', type: 'Ice', secondaryType: 'Flying', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/144.png' },
+    { id: 145, name: 'Zapdos', type: 'Electric', secondaryType: 'Flying', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/145.png' },
+    { id: 146, name: 'Moltres', type: 'Fire', secondaryType: 'Flying', hp: 90, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/146.png' },
+    { id: 147, name: 'Dratini', type: 'Dragon', secondaryType: null, hp: 41, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/147.png' },
+    { id: 148, name: 'Dragonair', type: 'Dragon', secondaryType: null, hp: 61, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/148.png' },
+    { id: 149, name: 'Dragonite', type: 'Dragon', secondaryType: 'Flying', hp: 91, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/149.png' },
+    { id: 150, name: 'Mewtwo', type: 'Psychic', secondaryType: null, hp: 106, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png' },
+    { id: 151, name: 'Mew', type: 'Psychic', secondaryType: null, hp: 100, sprite: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/151.png' }
   ];
 
   const [playerTeam, setPlayerTeam] = useState([]);
@@ -579,16 +579,22 @@ const PokemonBattle = () => {
   }, [battleLog]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-blue-300 flex items-center justify-center p-4">
-      <div className="w-full max-w-5xl bg-white rounded-xl shadow-2xl p-6 border-4 border-red-500">
+    <div className="min-h-screen bg-gradient-to-b from-blue-200 via-green-100 to-yellow-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl p-8 border-8 border-poke-red relative overflow-hidden">
+        {/* Poké Ball Decorative Background */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="w-64 h-64 bg-poke-red rounded-full absolute -top-32 -left-32 border-8 border-white"></div>
+          <div className="w-64 h-64 bg-poke-red rounded-full absolute -bottom-32 -right-32 border-8 border-white"></div>
+        </div>
+        
         {/* Game Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-4xl font-extrabold text-red-600 mb-2 drop-shadow-md">Pokémon Battle Simulator</h1>
-          <p className="text-lg text-gray-700 font-medium">Challenge the original 151 Pokémon!</p>
-          <div className="mt-4 flex justify-center gap-4">
+        <div className="mb-8 text-center relative z-10">
+          <h1 className="text-5xl font-extrabold text-poke-red mb-3 drop-shadow-lg">Pokémon Battle Simulator</h1>
+          <p className="text-xl text-gray-700 font-semibold tracking-wide">Unleash the Power of the Original 151!</p>
+          <div className="mt-6 flex justify-center gap-6">
             <button 
-              className={`px-6 py-2 rounded-full font-semibold text-lg transition-all duration-300 ${
-                gameMode === 'singleplayer' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${
+                gameMode === 'singleplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
               }`}
               onClick={() => {
                 setGameMode('singleplayer');
@@ -599,8 +605,8 @@ const PokemonBattle = () => {
               Single Player
             </button>
             <button 
-              className={`px-6 py-2 rounded-full font-semibold text-lg transition-all duration-300 ${
-                gameMode === 'multiplayer' ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              className={`px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg ${
+                gameMode === 'multiplayer' ? 'bg-poke-blue text-white border-4 border-poke-yellow transform scale-105' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
               }`}
               onClick={() => setGameMode('multiplayer')}
             >
@@ -611,34 +617,34 @@ const PokemonBattle = () => {
         
         {/* Multiplayer Setup */}
         {gameMode === 'multiplayer' && gameState === 'selecting' && multiplayerStatus === 'disconnected' && (
-          <div className="mb-8 p-6 bg-gray-50 rounded-lg shadow-inner border border-blue-300">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4">Multiplayer Setup</h2>
-            <div className="mb-4">
-              <label className="block mb-2 text-gray-800 font-semibold">Your Trainer Name:</label>
+          <div className="mb-10 p-8 bg-gray-50 rounded-xl shadow-inner border-4 border-poke-blue relative z-10">
+            <h2 className="text-3xl font-bold text-poke-blue mb-6 drop-shadow-md">Multiplayer Arena</h2>
+            <div className="mb-6">
+              <label className="block mb-2 text-xl text-gray-800 font-semibold">Trainer Name:</label>
               <input 
                 type="text" 
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
+                className="w-full p-4 border-2 border-poke-yellow rounded-lg focus:outline-none focus:ring-4 focus:ring-poke-blue bg-white text-gray-800 text-lg shadow-md"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder="Enter your trainer name"
               />
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-6">
               <button 
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md"
+                className="bg-poke-green hover:bg-green-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow"
                 onClick={createMultiplayerRoom}
               >
                 Create Room
               </button>
               <input 
                 type="text" 
-                className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
+                className="flex-1 p-4 border-2 border-poke-yellow rounded-lg focus:outline-none focus:ring-4 focus:ring-poke-blue bg-white text-gray-800 text-lg shadow-md"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value)}
                 placeholder="Enter room code"
               />
               <button 
-                className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md disabled:opacity-50"
+                className="bg-poke-purple hover:bg-purple-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow disabled:opacity-50"
                 disabled={!roomCode}
                 onClick={joinMultiplayerRoom}
               >
@@ -650,14 +656,14 @@ const PokemonBattle = () => {
         
         {/* Pokémon Selection */}
         {showAllPokemon && (
-          <div className="mb-8 p-6 bg-white rounded-lg shadow-lg border-2 border-yellow-400">
-            <h2 className="text-2xl font-bold text-yellow-600 mb-4">Create Your Team</h2>
-            <p className="text-gray-700 mb-4">Select {teamSize} Pokémon to form your ultimate team!</p>
-            <div className="flex mb-6 gap-4">
+          <div className="mb-10 p-8 bg-white rounded-xl shadow-lg border-4 border-poke-yellow relative z-10">
+            <h2 className="text-3xl font-bold text-poke-yellow mb-6 drop-shadow-md">Assemble Your Team</h2>
+            <p className="text-lg text-gray-700 mb-6 font-semibold">Pick {teamSize} Pokémon to dominate the battlefield!</p>
+            <div className="flex mb-8 gap-6">
               <div className="flex-1">
-                <label className="block mb-2 text-gray-800 font-semibold">Filter by Type:</label>
+                <label className="block mb-2 text-xl text-gray-800 font-semibold">Filter by Type:</label>
                 <select 
-                  className="w-full p-3 border rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full p-4 border-2 border-poke-yellow rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-4 focus:ring-poke-blue text-lg shadow-md"
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                 >
@@ -680,24 +686,24 @@ const PokemonBattle = () => {
                 </select>
               </div>
               <div className="flex-1">
-                <label className="block mb-2 text-gray-800 font-semibold">Search:</label>
+                <label className="block mb-2 text-xl text-gray-800 font-semibold">Search:</label>
                 <input
                   type="text"
-                  className="w-full p-3 border rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  className="w-full p-4 border-2 border-poke-yellow rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-4 focus:ring-poke-blue text-lg shadow-md"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search Pokémon"
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 mb-8 max-h-96 overflow-y-auto">
               {getFilteredPokemon().map((pokemon) => (
                 <div 
                   key={pokemon.id} 
-                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition-all duration-300 border-2 ${
+                  className={`flex flex-col items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border-4 ${
                     playerTeam.some(p => p.id === pokemon.id) 
-                      ? 'bg-blue-100 border-blue-500 shadow-md' 
-                      : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:shadow-lg'
+                      ? 'bg-blue-100 border-poke-blue shadow-xl' 
+                      : 'bg-gray-50 border-gray-300 hover:bg-gray-100 hover:shadow-xl'
                   }`}
                   onClick={() => {
                     if (playerTeam.some(p => p.id === pokemon.id)) {
@@ -707,7 +713,8 @@ const PokemonBattle = () => {
                     }
                   }}
                 >
-                  <div className="font-bold text-lg text-blue-700">{pokemon.name}</div>
+                  <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mb-2 pixelated" />
+                  <div className="font-bold text-xl text-poke-blue">{pokemon.name}</div>
                   <div className="text-sm text-gray-600">
                     {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
                   </div>
@@ -715,16 +722,17 @@ const PokemonBattle = () => {
                 </div>
               ))}
             </div>
-            <h3 className="font-bold text-xl text-blue-700 mb-2">Selected Team ({playerTeam.length}/{teamSize}):</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+            <h3 className="font-bold text-2xl text-poke-blue mb-4 drop-shadow-md">Selected Team ({playerTeam.length}/{teamSize}):</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 mb-8">
               {playerTeam.map((pokemon) => (
-                <div key={pokemon.id} className="flex flex-col items-center bg-blue-100 p-4 rounded-lg shadow-md border-2 border-blue-400">
-                  <div className="font-bold text-lg text-blue-700">{pokemon.name}</div>
+                <div key={pokemon.id} className="flex flex-col items-center bg-blue-100 p-4 rounded-xl shadow-lg border-4 border-poke-blue">
+                  <img src={pokemon.sprite} alt={pokemon.name} className="w-16 h-16 mb-2 pixelated" />
+                  <div className="font-bold text-lg text-poke-blue">{pokemon.name}</div>
                   <div className="text-sm text-gray-600">
                     {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
                   </div>
                   <button 
-                    className="mt-2 text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full transition-all duration-300"
+                    className="mt-2 text-sm bg-poke-red hover:bg-red-700 text-white px-4 py-1 rounded-full transition-all duration-300 shadow-md"
                     onClick={() => setPlayerTeam(playerTeam.filter(p => p.id !== pokemon.id))}
                   >
                     Remove
@@ -732,16 +740,16 @@ const PokemonBattle = () => {
                 </div>
               ))}
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-6 justify-center">
               <button 
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md disabled:opacity-50"
+                className="bg-poke-green hover:bg-green-700 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow disabled:opacity-50"
                 onClick={() => createCustomTeam(playerTeam)}
                 disabled={playerTeam.length !== teamSize}
               >
                 Confirm Team
               </button>
               <button 
-                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-full font-bold text-xl transition-all duration-300 shadow-lg border-2 border-poke-yellow"
                 onClick={() => setShowAllPokemon(false)}
               >
                 Cancel
@@ -752,241 +760,10 @@ const PokemonBattle = () => {
         
         {/* Team Selection / Battle Start */}
         {gameState === 'selecting' && !showAllPokemon && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4">Your Team</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+          <div className="mb-10 relative z-10">
+            <h2 className="text-3xl font-bold text-poke-blue mb-6 drop-shadow-md">Your Team</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 mb-8">
               {playerTeam.map((pokemon) => (
-                <div key={pokemon.id} className="flex flex-col items-center bg-white p-4 rounded-lg shadow-md border-2 border-blue-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="font-bold text-lg text-blue-700">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
-                  <div className="text-sm text-gray-600">HP: {pokemon.hp}</div>
-                </div>
-              ))}
-            </div>
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Opponent's Team</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-              {opponentTeam.map((pokemon) => (
-                <div key={pokemon.id} className="flex flex-col items-center bg-white p-4 rounded-lg shadow-md border-2 border-red-300 transition-all duration-300 hover:shadow-lg">
-                  <div className="font-bold text-lg text-red-600">{pokemon.name}</div>
-                  <div className="text-sm text-gray-600">
-                    {pokemon.type}{pokemon.secondaryType && `/${pokemon.secondaryType}`}
-                  </div>
-                  <div className="text-sm text-gray-600">HP: {pokemon.hp}</div>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-4 mt-4 justify-center">
-              <button 
-                className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-8 py-3 rounded-full border-4 border-yellow-600 shadow-lg transform transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={startBattle}
-                disabled={gameMode === 'multiplayer' && multiplayerStatus !== 'connected'}
-              >
-                Start Battle!
-              </button>
-              <button 
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md disabled:opacity-50"
-                onClick={generateRandomTeams}
-                disabled={gameMode === 'multiplayer' && multiplayerStatus === 'connected'}
-              >
-                Generate New Teams
-              </button>
-              <button 
-                className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md"
-                onClick={() => setShowAllPokemon(true)}
-              >
-                Create Custom Team
-              </button>
-              <div className="flex items-center gap-2">
-                <label className="text-gray-800 font-semibold">Team Size:</label>
-                <select 
-                  className="p-2 border rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={teamSize}
-                  onChange={(e) => setTeamSize(parseInt(e.target.value))}
-                >
-                  <option value="3">3</option>
-                  <option value="6">6</option>
-                  <option value="9">9</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Battle Arena */}
-        {gameState !== 'selecting' && (
-          <div className="bg-gray-50 p-6 rounded-lg shadow-inner border-2 border-red-400">
-            <div className="text-center mb-4">
-              {gameState === 'playerTurn' && <p className="text-2xl font-bold text-green-600 animate-pulse">Your Turn!</p>}
-              {gameState === 'opponentTurn' && <p className="text-2xl font-bold text-red-600 animate-pulse">Opponent's Turn...</p>}
-              {gameState === 'switching' && <p className="text-2xl font-bold text-blue-600 animate-pulse">Choose Your Next Pokémon!</p>}
-              {gameState === 'playerWin' && <p className="text-3xl font-bold text-green-600 animate-bounce">You Won the Battle!</p>}
-              {gameState === 'opponentWin' && <p className="text-3xl font-bold text-red-600 animate-bounce">You Lost the Battle!</p>}
-            </div>
-            <div className="flex flex-col md:flex-row justify-between items-center mb-6 bg-gradient-to-r from-blue-200 to-red-200 p-6 rounded-lg shadow-md">
-              <div className="flex flex-col items-center mb-4 md:mb-0">
-                <div className="text-xl font-bold text-blue-700">{playerActivePokemon?.name}</div>
-                <div className="w-40 bg-gray-300 rounded-full h-4 mt-2 shadow-inner">
-                  <div
-                    className="bg-green-500 h-4 rounded-full transition-all duration-300"
-                    style={{ width: `${(playerActivePokemon?.currentHp / playerActivePokemon?.hp) * 100}%` }}
-                  ></div>
-                </div>
-                <div className="text-sm text-gray-800 mt-1">HP: {playerActivePokemon?.currentHp}/{playerActivePokemon?.hp}</div>
-                <div className="text-sm text-gray-600">Type: {playerActivePokemon?.type}{playerActivePokemon?.secondaryType && `/${playerActivePokemon?.secondaryType}`}</div>
-              </div>
-              <div className="text-3xl font-extrabold text-yellow-600 drop-shadow-md">VS</div>
-              <div className="flex flex-col items-center">
-                <div className="text-xl font-bold text-red-600">{opponentActivePokemon?.name}</div>
-                <div className="w-40 bg-gray-300 rounded-full h-4 mt-2 shadow-inner">
-                  <div
-                    className="bg-red-500 h-4 rounded-full transition-all duration-300"
-                    style={{ width: `${(opponentActivePokemon?.currentHp / opponentActivePokemon?.hp) * 100}%` }}
-                  ></div>
-                </div>
-                <div className="text-sm text-gray-800 mt-1">HP: {opponentActivePokemon?.currentHp}/{opponentActivePokemon?.hp}</div>
-                <div className="text-sm text-gray-600">Type: {opponentActivePokemon?.type}{opponentActivePokemon?.secondaryType && `/${opponentActivePokemon?.secondaryType}`}</div>
-              </div>
-            </div>
-            <div 
-              id="battle-log"
-              className="h-40 overflow-y-auto p-4 mb-6 bg-white rounded-lg shadow-inner border-2 border-gray-300 text-gray-800"
-            >
-              {battleLog.map((log, index) => (
-                <div key={index} className="mb-1 text-sm animate-fade-in">{log}</div>
-              ))}
-            </div>
-            {(gameState === 'playerTurn' || gameState === 'opponentTurn') && (
-              <div className="mb-6">
-                <h3 className="font-bold text-lg text-blue-700 mb-2">Moves</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  {playerActivePokemon?.moves.map((move, index) => (
-                    <button
-                      key={index}
-                      className={`p-3 rounded-lg text-white font-semibold transition-all duration-300 shadow-md ${
-                        gameState === 'playerTurn'
-                          ? selectedMove === index
-                            ? 'bg-yellow-500 scale-105 border-2 border-yellow-700'
-                            : 'bg-blue-500 hover:bg-blue-600 hover:scale-105'
-                          : 'bg-gray-400 cursor-not-allowed'
-                      }`}
-                      onClick={() => handlePlayerAttack(index)}
-                      disabled={gameState !== 'playerTurn'}
-                    >
-                      {move.name} ({move.type}) - {move.power} PWR
-                      {selectedMove === index && <span className="ml-2">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {(gameState === 'playerTurn' || gameState === 'switching') && (
-              <div>
-                <h3 className="font-bold text-lg text-blue-700 mb-2">Switch Pokémon</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                  {playerTeam.map((pokemon) => (
-                    <button
-                      key={pokemon.id}
-                      className={`p-3 rounded-lg font-semibold transition-all duration-300 shadow-md ${
-                        pokemon.currentHp <= 0
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : pokemon.id === playerActivePokemon?.id
-                            ? 'bg-yellow-500 text-black scale-105 border-2 border-yellow-700'
-                            : 'bg-purple-500 text-white hover:bg-purple-600 hover:scale-105'
-                      }`}
-                      onClick={() => switchPokemon(pokemon)}
-                      disabled={pokemon.currentHp <= 0 || pokemon.id === playerActivePokemon?.id}
-                    >
-                      <div className="text-sm">{pokemon.name}</div>
-                      <div className="text-xs">HP: {pokemon.currentHp}/{pokemon.hp}</div>
-                      {pokemon.id === playerActivePokemon?.id && <span className="text-xs">Active</span>}
-                      {pokemon.currentHp <= 0 && <span className="text-xs">Fainted</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {gameMode === 'multiplayer' && multiplayerStatus === 'connected' && (
-              <div className="mt-6 mb-6">
-                <h3 className="font-bold text-lg text-blue-700 mb-2">Chat</h3>
-                <div className="bg-white p-4 rounded-lg h-24 overflow-y-auto mb-4 shadow-inner border-2 border-blue-300" id="chat-window">
-                  <div className="text-sm text-gray-800">System: Battle started!</div>
-                  <div className="text-sm text-gray-800">System: Good luck and have fun!</div>
-                  <div className="text-sm text-gray-800">System: Room Code: {roomCode}</div>
-                </div>
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
-                    placeholder="Send a message"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && e.target.value.trim() && socketRef.current) {
-                        const chatMsg = e.target.value.trim();
-                        const chatWindow = document.getElementById('chat-window');
-                        if (chatWindow) {
-                          const msgElement = document.createElement('div');
-                          msgElement.className = 'text-sm text-gray-800';
-                          msgElement.textContent = `${playerName}: ${chatMsg}`;
-                          chatWindow.appendChild(msgElement);
-                          chatWindow.scrollTop = chatWindow.scrollHeight;
-                        }
-                        socketRef.current.emit('battle_action', {
-                          roomId: roomCode,
-                          action: {
-                            type: 'chat',
-                            message: chatMsg,
-                            sender: playerName
-                          }
-                        });
-                        e.target.value = '';
-                      }
-                    }}
-                  />
-                  <button 
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md"
-                    onClick={(e) => {
-                      const input = e.target.previousSibling;
-                      if (input.value.trim() && socketRef.current) {
-                        const chatMsg = input.value.trim();
-                        const chatWindow = document.getElementById('chat-window');
-                        if (chatWindow) {
-                          const msgElement = document.createElement('div');
-                          msgElement.className = 'text-sm text-gray-800';
-                          msgElement.textContent = `${playerName}: ${chatMsg}`;
-                          chatWindow.appendChild(msgElement);
-                          chatWindow.scrollTop = chatWindow.scrollHeight;
-                        }
-                        socketRef.current.emit('battle_action', {
-                          roomId: roomCode,
-                          action: {
-                            type: 'chat',
-                            message: chatMsg,
-                            sender: playerName
-                          }
-                        });
-                        input.value = '';
-                      }
-                    }}
-                  >
-                    Send
-                  </button>
-                </div>
-              </div>
-            )}
-            {(gameState === 'playerWin' || gameState === 'opponentWin') && (
-              <button
-                className="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 shadow-lg mt-4"
-                onClick={generateRandomTeams}
-              >
-                New Battle
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default PokemonBattle;
+                <div key={pokemon.id} className="flex flex-col items-center bg-white p-4 rounded-xl shadow-lg border-4 border-poke-blue transition-all duration-300 hover:shadow-xl">
+                  <img src={pokemon.sprite} alt={pokemon.name} className="w-20 h-20 mb-2 pixelated" />
+                  <div className
