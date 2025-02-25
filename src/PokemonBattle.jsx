@@ -103,7 +103,7 @@ const PokemonBattle = () => {
     { id: 94, name: 'Gengar', type: 'Ghost', secondaryType: 'Poison', hp: 60 },
     { id: 95, name: 'Onix', type: 'Rock', secondaryType: 'Ground', hp: 35 },
     { id: 96, name: 'Drowzee', type: 'Psychic', secondaryType: null, hp: 60 },
-    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: null, hp: 85 },
+    { id: 97, name: 'Hypno', type: 'Psychic', secondaryType: 'null', hp: 85 },
     { id: 98, name: 'Krabby', type: 'Water', secondaryType: null, hp: 30 },
     { id: 99, name: 'Kingler', type: 'Water', secondaryType: null, hp: 55 },
     { id: 100, name: 'Voltorb', type: 'Electric', secondaryType: null, hp: 40 },
@@ -702,6 +702,7 @@ const PokemonBattle = () => {
       setGameState('opponentTurn');
       if (gameMode === 'singleplayer') {
         setTimeout(() => {
+          console.log('Triggering opponent attack'); // Debug log
           handleOpponentAttack();
         }, 1500);
       }
@@ -710,8 +711,7 @@ const PokemonBattle = () => {
 
   // Handle opponent's attack (for singleplayer)
   const handleOpponentAttack = () => {
-    if (gameState !== 'opponentTurn') return;
-    
+    console.log('Opponent attack executing'); // Debug log
     const moveIndex = Math.floor(Math.random() * opponentActivePokemon.moves.length);
     const move = opponentActivePokemon.moves[moveIndex];
     const effectiveness = getTypeEffectiveness(
