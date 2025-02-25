@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css'; // Add this line
-import PokemonBattle from './PokemonBattle';
+import App from './App';
+import './index.css'; // Optional: Add custom CSS if needed
 
 ReactDOM.render(
   <React.StrictMode>
-    <PokemonBattle />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
