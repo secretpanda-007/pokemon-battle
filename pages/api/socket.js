@@ -1,83 +1,68 @@
-// pages/api/socket.js
+// /api/socket.js
 import { Server } from 'socket.io';
+import http from 'http';
+
+export default function handler(req, res) {
+  if (res.socket.server.io) {
+    console.log('Socket.IO server already running');
+  } else {
+    const httpServer = http.createServer();
+    const io = new Server(httpServer, {
+      path: '/api/socket',
+      cors: {
+        origin: '*', // Adjust this in production for security
+      },
+    });
+
+    res.socket.server.io = io;
+
+    io.on('connection', (socket) => {
+      console.log('Client connected:', socket.id);
+
+      // Room creation
+      socket.on('create_room', ({ name }) => {
+        const roomId = Math.random().toString(36).substring(2, 8); // Simple room code generator
+        socket.join(roomId);
+        socket.emit('room_created', { roomId });
+      });
+
+      // Joining a room
+      socket.on('join_room', ({ roomId, playerData }) => {
+        const room = io.sockets.adapter.rooms.get(roomId);
+        if (room && room.size < 2) {
+          socket.join(roomId);
+          socket.emit('joined_room', { roomId });
+          const players = Array.from(room).map((id) => ({
+            id,
+            name: id === socket.id ? playerData.name : 'Opponent', // Simplified
+          }));
+          io.to(roomId).emit('battle_ready', { players });
+        } else {
+          socket.emit('error', { message: 'Room full or does not exist' });
+        }
+      });
+
+      // Battle actions
+      socket.on('battle_action', ({ roomId, action }) => {
+        socket.to(roomId).emit('opponent_action', action);
+      });
+
+      // Team selection
+      socket.on('team_selected', ({ roomId, team }) => {
+        socket.to(roomId).emit('opponent_team', { team });
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Client disconnected:', socket.id);
+        socket.broadcast.emit('opponent_disconnected');
+      });
+    });
+  }
+  res.end();
+}
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // Required for Socket.IO
   },
 };
-
-export default function SocketHandler(req, res) {
-  if (res.socket.server.io) {
-    console.log('Socket is already running');
-    res.end();
-    return;
-  }
-  
-  const io = new Server(res.socket.server, {
-    path: '/api/socket',
-    addTrailingSlash: false,
-  });
-  
-  res.socket.server.io = io;
-  
-  // Room tracking
-  const activeRooms = new Map();
-  
-  io.on('connection', socket => {
-    console.log(`Player connected: ${socket.id}`);
-    
-    // Create a new battle room
-    socket.on('create_room', (playerData) => {
-      const roomId = generateRoomId();
-      socket.join(roomId);
-      
-      activeRooms.set(roomId, {
-        creator: socket.id,
-        creatorData: playerData,
-        opponent: null,
-        gameState: 'waiting'
-      });
-      
-      socket.emit('room_created', { roomId });
-    });
-    
-    // Handle joining rooms
-    socket.on('join_room', ({ roomId, playerData }) => {
-      const room = activeRooms.get(roomId);
-      if (!room) {
-        socket.emit('error', { message: 'Room not found' });
-        return;
-      }
-      
-      socket.join(roomId);
-      room.opponent = socket.id;
-      room.opponentData = playerData;
-      room.gameState = 'ready';
-      
-      socket.emit('joined_room', { roomId });
-      io.to(roomId).emit('battle_ready', {
-        players: [room.creatorData, playerData]
-      });
-    });
-    
-    socket.on('battle_action', ({ roomId, action }) => {
-      socket.to(roomId).emit('opponent_action', action);
-    });
-    
-    socket.on('team_selected', ({ roomId, team }) => {
-      socket.to(roomId).emit('opponent_team', { team });
-    });
-    
-    socket.on('disconnect', () => {
-      console.log('Player disconnected');
-    });
-  });
-  
-  function generateRoomId() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
-  }
-  
-  console.log('Socket server initialized');
-  res.end();
-}
