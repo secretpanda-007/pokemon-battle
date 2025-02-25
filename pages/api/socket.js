@@ -1,17 +1,16 @@
-// /api/socket.js
 import { Server } from 'socket.io';
 import http from 'http';
 
 export default function handler(req, res) {
   if (res.socket.server.io) {
-    console.log('Socket.IO server already running');
+    console.log('Socket IO server already running');
   } else {
     const httpServer = http.createServer();
     const io = new Server(httpServer, {
       path: '/api/socket',
-      cors: {
-        origin: '*', // Adjust this in production for security
-      },
+      // For development, allow all origins; for production, restrict to your app's URL
+      // cors: { origin: '*' },
+      // For production: cors: { origin: 'https://your-app.vercel.app' },
     });
 
     res.socket.server.io = io;
@@ -21,7 +20,7 @@ export default function handler(req, res) {
 
       // Room creation
       socket.on('create_room', ({ name }) => {
-        const roomId = Math.random().toString(36).substring(2, 8); // Simple room code generator
+        const roomId = Math.random().toString(36).substring(2, 8);
         socket.join(roomId);
         socket.emit('room_created', { roomId });
       });
@@ -34,7 +33,7 @@ export default function handler(req, res) {
           socket.emit('joined_room', { roomId });
           const players = Array.from(room).map((id) => ({
             id,
-            name: id === socket.id ? playerData.name : 'Opponent', // Simplified
+            name: id === socket.id ? playerData.name : 'Opponent',
           }));
           io.to(roomId).emit('battle_ready', { players });
         } else {
@@ -63,6 +62,6 @@ export default function handler(req, res) {
 
 export const config = {
   api: {
-    bodyParser: false, // Required for Socket.IO
+    bodyParser: false,
   },
 };
