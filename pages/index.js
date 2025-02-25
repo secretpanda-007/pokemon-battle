@@ -1,7 +1,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-// Use dynamic import with SSR disabled to prevent hydration issues with socket.io
 const PokemonBattle = dynamic(() => import('../components/PokemonBattle'), { 
   ssr: false 
 });
