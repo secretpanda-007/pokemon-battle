@@ -1,26 +1,29 @@
 {
-  "name": "pokemon-battle-simulator",
+  "name": "pokemon-battle",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
   "dependencies": {
-    "next": "^13.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "socket.io": "^2.4.1",
-    "socket.io-client": "^2.4.0"
+    "socket.io": "^4.7.0",
+    "socket.io-client": "^4.7.0"
   },
-  "devDependencies": {
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.21",
-    "tailwindcss": "^3.3.1"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "engines": {
-    "node": ">=14.0.0"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
