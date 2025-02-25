@@ -289,7 +289,7 @@ const PokemonBattle = () => {
 
   const initializeSocket = () => {
     if (!socketRef.current) {
-      socketRef.current = io('http://localhost:3001', { path: '/api/socket' });
+      socketRef.current = io('YOUR_SERVER_URL', { path: '/api/socket' }); // Replace with your deployed server URL
       socketRef.current.on('connect', () => {
         console.log('Connected to socket server');
         setMultiplayerStatus('waiting');
@@ -721,20 +721,4 @@ const PokemonBattle = () => {
                 Start Battle
               </button>
               <button
-                className="bg-poke-green hover:bg-green-700 text-white font-bold px-10 py-4 rounded-full border-4 border-poke-yellow shadow-lg transform transition-all duration-300 hover:scale-105"
-                onClick={() => setShowAllPokemon(true)}
-              >
-                Change Team
-              </button>
-            </div>
-          </div>
-        )}
-
-        {(gameState === 'playerTurn' || gameState === 'opponentTurn' || gameState === 'switching' || gameState === 'playerWin' || gameState === 'opponentWin') && (
-          <div className="relative z-10">
-            <div className="flex justify-between mb-8">
-              <div className="w-1/2 p-4">
-                <h2 className="text-2xl font-bold text-poke-blue mb-4">Your Pokémon</h2>
-                {playerActivePokemon && (
-                  <div className="bg-white p-4 rounded-xl shadow-lg border-4 border-poke-blue">
-                    <img src={playerActivePokemon.sprite} alt={
+                className="bg-poke-green hover:bg-green-700 text-white font-bold px-10 py-4 rounded-full border-4 border-poke-yellow shadow-lg transform
