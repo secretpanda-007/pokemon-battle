@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import io from 'socket.io-client';
 
 const PokemonBattle = () => {
+  // Socket reference for WebSocket connection
+  const socketRef = useRef(null);
+
   // Complete list of original 151 Pokemon with types and base HP
   const originalPokemonList = [
     { id: 1, name: 'Bulbasaur', type: 'Grass', secondaryType: 'Poison', hp: 45, image: '/api/placeholder/80/80' },
@@ -178,6 +182,13 @@ const PokemonBattle = () => {
     if (gameMode === 'singleplayer') {
       generateRandomTeams();
     }
+    
+    // Clean up socket connection on unmount
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
   }, []);
 
   // Extended type chart for all Generation 1 types
@@ -449,32 +460,161 @@ const PokemonBattle = () => {
     setGameState('playerTurn');
   };
 
-  // Connect to multiplayer
-  const connectToMultiplayer = () => {
+  // Initialize socket connection
+  const initializeSocket = async () => {
+    if (!socketRef.current) {
+      // Create a new socket connection
+      await fetch('/api/socket');
+      socketRef.current = io();
+      
+      // Socket event listeners
+      socketRef.current.on('connect', () => {
+        console.log('Connected to socket server');
+      });
+      
+      socketRef.current.on('room_created', ({ roomId }) => {
+        setRoomCode(roomId);
+        setBattleLog([...battleLog, `Room created! Your room code is: ${roomId}`]);
+        setBattleLog([...battleLog, `Waiting for an opponent to join...`]);
+      });
+      
+      socketRef.current.on('joined_room', ({ roomId }) => {
+        setRoomCode(roomId);
+        setBattleLog([...battleLog, `Successfully joined room ${roomId}!`]);
+      });
+      
+      socketRef.current.on('battle_ready', ({ players }) => {
+        setBattleLog([...battleLog, `Battle starting between ${players[0].name} and ${players[1].name}!`]);
+        setMultiplayerStatus('connected');
+        generateRandomTeams();
+      });
+      
+      socketRef.current.on('opponent_action', (action) => {
+        handleOpponentAction(action);
+      });
+      
+      socketRef.current.on('opponent_team', ({ team }) => {
+        setOpponentTeam(team);
+      });
+      
+      socketRef.current.on('opponent_disconnected', () => {
+        setBattleLog([...battleLog, `Your opponent has disconnected.`]);
+        setMultiplayerStatus('disconnected');
+      });
+      
+      socketRef.current.on('error', ({ message }) => {
+        setBattleLog([...battleLog, `Error: ${message}`]);
+        setMultiplayerStatus('disconnected');
+      });
+    }
+  };
+  
+  // Create a new multiplayer room
+  const createMultiplayerRoom = async () => {
     if (!playerName.trim()) {
       setBattleLog([...battleLog, 'Please enter your name first!']);
       return;
     }
     
     setMultiplayerStatus('waiting');
-    setBattleLog([...battleLog, 'Searching for opponent...']);
+    await initializeSocket();
     
-    // Mock connection (would be real websocket/networking code in production)
-    setTimeout(() => {
-      // This is where we'd usually connect to a real server
-      // For demo purposes, we'll mock a successful connection
-      setMultiplayerStatus('connected');
+    socketRef.current.emit('create_room', {
+      name: playerName,
+    });
+  };
+  
+  // Join an existing multiplayer room
+  const joinMultiplayerRoom = async () => {
+    if (!playerName.trim() || !roomCode) {
+      setBattleLog([...battleLog, 'Please enter your name and a room code!']);
+      return;
+    }
+    
+    setMultiplayerStatus('waiting');
+    await initializeSocket();
+    
+    socketRef.current.emit('join_room', {
+      roomId: roomCode,
+      playerData: {
+        name: playerName,
+      }
+    });
+  };
+  
+  // Handle opponent actions received via WebSocket
+  const handleOpponentAction = (action) => {
+    if (action.type === 'attack') {
+      // Process opponent's attack move
+      const move = action.move;
+      const effectiveness = getTypeEffectiveness(
+        move.type, 
+        playerActivePokemon.type, 
+        playerActivePokemon.secondaryType
+      );
       
-      // Generate random teams for both players
-      generateRandomTeams();
+      // Calculate damage
+      const baseDamage = move.power;
+      const damage = Math.floor(baseDamage * effectiveness * action.randomFactor);
       
-      setBattleLog([
-        ...battleLog, 
-        'Connected with opponent!',
-        'Room code: ' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        'Get ready for battle!'
-      ]);
-    }, 2000);
+      // Apply damage to player's active Pokémon
+      const newHp = Math.max(0, playerActivePokemon.currentHp - damage);
+      
+      // Update player Pokémon
+      const updatedPlayer = { ...playerActivePokemon, currentHp: newHp };
+      setPlayerActivePokemon(updatedPlayer);
+      
+      // Update player team
+      setPlayerTeam(prev => 
+        prev.map(pokemon => 
+          pokemon.id === playerActivePokemon.id ? updatedPlayer : pokemon
+        )
+      );
+      
+      // Update battle log
+      addToLog(`Opponent's ${action.pokemonName} used ${move.name}!`);
+      addToLog(`Dealt ${damage} damage!`);
+      
+      // Check if player's Pokémon fainted
+      if (newHp === 0) {
+        addToLog(`${playerActivePokemon.name} fainted!`);
+        
+        // Find next player Pokémon
+        const nextPlayer = playerTeam.find(p => p.id !== playerActivePokemon.id && p.currentHp > 0);
+        
+        if (nextPlayer) {
+          setGameState('switching');
+          addToLog('Choose your next Pokémon!');
+        } else {
+          addToLog('All your Pokémon have fainted!');
+          setGameState('opponentWin');
+        }
+      } else {
+        setGameState('playerTurn');
+      }
+    } else if (action.type === 'switch') {
+      // Process opponent switching Pokémon
+      addToLog(`Opponent switched to ${action.pokemonName}!`);
+      
+      // Update opponent's active Pokémon
+      const switchedPokemon = opponentTeam.find(p => p.id === action.pokemonId);
+      if (switchedPokemon) {
+        setOpponentActivePokemon(switchedPokemon);
+      }
+      
+      // Player's turn
+      setGameState('playerTurn');
+    } else if (action.type === 'chat') {
+      // Handle chat message from opponent
+      const chatWindow = document.getElementById('chat-window');
+      if (chatWindow) {
+        const msgElement = document.createElement('div');
+        msgElement.className = 'text-sm';
+        msgElement.textContent = `${action.sender}: ${action.message}`;
+        chatWindow.appendChild(msgElement);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+    }
   };
 
   // Create a custom team
@@ -509,6 +649,14 @@ const PokemonBattle = () => {
     setBattleLog(['Custom team selected!', 'Click "Start Battle" to begin!']);
     setGameState('selecting');
     setShowAllPokemon(false);
+    
+    // Send team info to opponent if in multiplayer mode
+    if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
+      socketRef.current.emit('team_selected', {
+        roomId: roomCode,
+        team: playerPokemonTeam
+      });
+    }
   };
 
   // Filter pokemon by type and/or search term
@@ -576,6 +724,20 @@ const PokemonBattle = () => {
       addToLog(`Dealt ${damage} damage! ${effectivenessMessage}`);
     }
     
+    // If in multiplayer mode, send the attack to opponent
+    if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
+      socketRef.current.emit('battle_action', {
+        roomId: roomCode,
+        action: {
+          type: 'attack',
+          pokemonName: playerActivePokemon.name,
+          move: move,
+          randomFactor: randomFactor,
+          effectiveness: effectiveness
+        }
+      });
+    }
+    
     // Check if opponent fainted
     if (newHp === 0) {
       addToLog(`${opponentActivePokemon.name} fainted!`);
@@ -599,10 +761,12 @@ const PokemonBattle = () => {
       // Switch to opponent's turn
       setGameState('opponentTurn');
       
-      // Opponent attacks after a delay
-      setTimeout(() => {
-        handleOpponentAttack();
-      }, 1500);
+      // For single player, handle AI opponent's turn after a delay
+      if (gameMode === 'singleplayer') {
+        setTimeout(() => {
+          handleOpponentAttack();
+        }, 1500);
+      }
     }
   };
 
@@ -686,12 +850,28 @@ const PokemonBattle = () => {
     setPlayerActivePokemon(pokemon);
     addToLog(`You switched to ${pokemon.name}!`);
     
+    // If in multiplayer mode, send the switch to opponent
+    if (gameMode === 'multiplayer' && multiplayerStatus === 'connected' && socketRef.current) {
+      socketRef.current.emit('battle_action', {
+        roomId: roomCode,
+        action: {
+          type: 'switch',
+          pokemonId: pokemon.id,
+          pokemonName: pokemon.name
+        }
+      });
+    }
+    
     if (gameState === 'playerTurn') {
       // If voluntary switch during player's turn, opponent gets a turn
       setGameState('opponentTurn');
-      setTimeout(() => {
-        handleOpponentAttack();
-      }, 1500);
+      
+      // For single player, handle AI opponent's turn after a delay
+      if (gameMode === 'singleplayer') {
+        setTimeout(() => {
+          handleOpponentAttack();
+        }, 1500);
+      }
     } else {
       // If switching after a Pokémon fainted, player's turn continues
       setGameState('playerTurn');
@@ -1083,17 +1263,75 @@ const PokemonBattle = () => {
           {gameMode === 'multiplayer' && multiplayerStatus === 'connected' && (
             <div className="mt-4 mb-4">
               <h3 className="font-bold mb-1">Chat:</h3>
-              <div className="bg-white p-2 border rounded h-20 overflow-y-auto mb-2">
+              <div className="bg-white p-2 border rounded h-20 overflow-y-auto mb-2" id="chat-window">
                 <div className="text-sm">System: Battle started!</div>
                 <div className="text-sm">System: Good luck and have fun!</div>
+                <div className="text-sm">System: Room Code: {roomCode}</div>
               </div>
               <div className="flex gap-2">
                 <input 
                   type="text" 
                   className="flex-1 p-2 border rounded"
                   placeholder="Send a message"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && e.target.value.trim() && socketRef.current) {
+                      const chatMsg = e.target.value.trim();
+                      // Add message to local chat
+                      const chatWindow = document.getElementById('chat-window');
+                      if (chatWindow) {
+                        const msgElement = document.createElement('div');
+                        msgElement.className = 'text-sm';
+                        msgElement.textContent = `${playerName}: ${chatMsg}`;
+                        chatWindow.appendChild(msgElement);
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                      }
+                      
+                      // Send message to opponent
+                      socketRef.current.emit('battle_action', {
+                        roomId: roomCode,
+                        action: {
+                          type: 'chat',
+                          message: chatMsg,
+                          sender: playerName
+                        }
+                      });
+                      
+                      // Clear input
+                      e.target.value = '';
+                    }
+                  }}
                 />
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                <button 
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                  onClick={(e) => {
+                    const input = e.target.previousSibling;
+                    if (input.value.trim() && socketRef.current) {
+                      const chatMsg = input.value.trim();
+                      // Add message to local chat
+                      const chatWindow = document.getElementById('chat-window');
+                      if (chatWindow) {
+                        const msgElement = document.createElement('div');
+                        msgElement.className = 'text-sm';
+                        msgElement.textContent = `${playerName}: ${chatMsg}`;
+                        chatWindow.appendChild(msgElement);
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                      }
+                      
+                      // Send message to opponent
+                      socketRef.current.emit('battle_action', {
+                        roomId: roomCode,
+                        action: {
+                          type: 'chat',
+                          message: chatMsg,
+                          sender: playerName
+                        }
+                      });
+                      
+                      // Clear input
+                      input.value = '';
+                    }
+                  }}
+                >
                   Send
                 </button>
               </div>
