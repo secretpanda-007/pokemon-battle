@@ -2,17 +2,11 @@ import { Server } from 'socket.io';
 import http from 'http';
 
 export default function handler(req, res) {
-  if (res.socket.server.io) {
-    console.log('Socket IO server already running');
-  } else {
+  if (!res.socket.server.io) {
     const httpServer = http.createServer();
     const io = new Server(httpServer, {
-      path: '/api/socket',
-      // For development, allow all origins; for production, restrict to your app's URL
-      // cors: { origin: '*' },
-      // For production: cors: { origin: 'https://your-app.vercel.app' },
+      path: '/socket.io'
     });
-
     res.socket.server.io = io;
 
     io.on('connection', (socket) => {
@@ -59,9 +53,3 @@ export default function handler(req, res) {
   }
   res.end();
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
