@@ -1,15 +1,15 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "public/**",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     },
     {
-      "src": "build/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**",
+      "src": "api/socket.js",
       "use": "@vercel/node"
     }
   ],
@@ -20,7 +20,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/build/$1"
+      "dest": "/$1"
     }
   ]
 }
